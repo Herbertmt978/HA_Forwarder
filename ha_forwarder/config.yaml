@@ -1,5 +1,5 @@
 name: HA Forwarder
-version: "0.1.0"
+version: "0.1.1"
 slug: ha_forwarder
 description: Forward TCP traffic from the Home Assistant host to another TCP service.
 url: https://github.com/Herbertmt978/HA_Forwarder
@@ -10,6 +10,7 @@ startup: services
 boot: auto
 init: false
 stage: stable
+apparmor: true
 host_network: true
 options:
   listen_port: 5279

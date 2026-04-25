@@ -1,0 +1,43 @@
+#include <tunables/global>
+
+profile ha_forwarder flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  signal,
+  network tcp,
+  network inet stream,
+  network inet6 stream,
+  network unix stream,
+  network unix dgram,
+
+  capability net_bind_service,
+
+  /** rix,
+
+  /init rix,
+  /run.sh rix,
+  /command/** rix,
+  /package/** rix,
+  /bin/** rix,
+  /usr/bin/** rix,
+  /lib/** mr,
+  /usr/lib/** mr,
+
+  /etc/s6-overlay/** rix,
+  /etc/s6/** rix,
+  /run/s6/** rwix,
+  /etc/services.d/** rwix,
+  /etc/cont-init.d/** rwix,
+  /etc/cont-finish.d/** rwix,
+
+  /data/options.json r,
+  /data/** r,
+  /run/** rwk,
+  /tmp/** rw,
+  /proc/** r,
+
+  deny /proc/kcore rwklx,
+  deny /proc/sysrq-trigger rwklx,
+  deny /proc/sys/** wklx,
+}

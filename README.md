@@ -29,3 +29,5 @@ target_port: 5279
 - `target_port`: the TCP port on the target service.
 
 The add-on uses host networking so the listen port can be changed directly in the add-on configuration.
+
+The container runs with a custom AppArmor profile to restrict filesystem and process access while allowing TCP forwarding.
