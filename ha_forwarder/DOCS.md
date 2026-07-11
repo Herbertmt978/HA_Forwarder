@@ -125,6 +125,19 @@ Review [CHANGELOG.md](CHANGELOG.md) before updating. Version 0.3.0 is a
 breaking configuration-surface change. Choose the path below that matches the
 port used by the earlier version.
 
+### Loopback and local-only destinations must be migrated
+
+Before version 0.3.0, the shared host network namespace meant loopback,
+unspecified, or other local-only `target_host` values referred to the Home
+Assistant host or its local network stack. This includes `localhost`,
+`localhost.`, `localhost.localdomain`, any address in `127.0.0.0/8`,
+`0.0.0.0`, and IPv6 loopback written as `::1` or `[::1]`. From version 0.3.0,
+those values refer to the App container and no longer reach a service bound
+only on the Home Assistant host. Before upgrading, replace any such value with
+a hostname or IP address that is reachable from the App container, then verify
+the destination service accepts the forwarded connection. Routes to separate
+non-loopback LAN hosts are unaffected by this change.
+
 ### Earlier version used a custom host port
 
 If an earlier version used a custom `listen_port`, migrate in this order:
@@ -151,7 +164,8 @@ host mapping remains 5279. Remove a stale `listen_port` key if Home Assistant
 still displays it, save any changes, then start or restart HA Forwarder and
 verify the forwarding log and destination delivery.
 
-Existing valid destinations, connection limits, and timeouts remain unchanged.
+Existing non-loopback destinations, connection limits, and timeouts retain
+their forwarding behavior.
 
 ## Support
 

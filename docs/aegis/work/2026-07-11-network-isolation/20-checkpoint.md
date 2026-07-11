@@ -28,6 +28,14 @@ green GitHub checks, then merge only if no review finding remains.
   quality re-review with no Critical or Important issue.
 - A checksum-verified jq 1.7.1 binary was used for a fresh local run of both
   configuration and runtime tests; both passed.
+- Final branch review identified two release-blocking gaps: the documentation
+  did not disclose the bridge-network loopback/local-only semantic change, and
+  the metadata security guard recognized only the literal YAML booleans
+  `true` and `false`.
+- The public upgrade guidance now requires pre-0.3.0 loopback or local-only
+  destinations to use a hostname or IP reachable from the App container, and
+  the regression guard normalizes YAML aliases (`true`/`yes`/`on`/`1` and
+  `false`/`no`/`off`/`0`) case-insensitively. Final re-review remains pending.
 
 ## Evidence references
 
@@ -41,6 +49,8 @@ green GitHub checks, then merge only if no review finding remains.
 - Task 3 documents the two upgrade paths explicitly: custom-port users record
   the old value before updating; default-port users update directly and verify
   the `5279/tcp` mapping remains 5279.
+- Final-fix config and runtime tests, Bash syntax, yamllint, actionlint, and
+  `git diff --check` all pass; independent re-review remains pending.
 - yamllint, actionlint, and `git diff --check` pass on the completed branch.
 
 ## Blockers
@@ -49,8 +59,9 @@ None.
 
 ## Resume state
 
-Open this checkpoint, then the plan. Continue with final branch review and PR
-publication. Do not merge, tag, release, or deploy until required checks pass.
+Open this checkpoint, then the plan. Re-review the loopback/local-only
+documentation and boolean-alias guard, then continue with PR publication. Do
+not merge, tag, release, or deploy until required checks pass.
 
 ## Drift check
 

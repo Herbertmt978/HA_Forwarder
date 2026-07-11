@@ -17,10 +17,40 @@ record_failure() {
 }
 
 top_level_boolean() {
+    local config_path="${2:-${CONFIG_PATH}}"
+
     awk -v key="${1}:" '
-        /^[^[:space:]#]/ && $1 == key { print tolower($2); exit }
-    ' "${CONFIG_PATH}"
+        /^[^[:space:]#]/ && $1 == key {
+            value = tolower($2)
+            if (value ~ /^(true|yes|on|1)$/) {
+                print "true"
+            } else if (value ~ /^(false|no|off|0)$/) {
+                print "false"
+            } else {
+                print value
+            }
+            exit
+        }
+    ' "${config_path}"
 }
+
+for boolean_alias in true TRUE yes Yes on ON 1; do
+    normalized="$(
+        printf 'probe: %s\n' "${boolean_alias}" |
+            top_level_boolean probe -
+    )"
+    [[ "${normalized}" == "true" ]] ||
+        record_failure "truthy YAML alias '${boolean_alias}' normalized to '${normalized}'"
+done
+
+for boolean_alias in false FALSE no No off OFF 0; do
+    normalized="$(
+        printf 'probe: %s\n' "${boolean_alias}" |
+            top_level_boolean probe -
+    )"
+    [[ "${normalized}" == "false" ]] ||
+        record_failure "falsey YAML alias '${boolean_alias}' normalized to '${normalized}'"
+done
 
 host_network="$(top_level_boolean host_network)"
 [[ "${host_network}" != "true" ]] ||

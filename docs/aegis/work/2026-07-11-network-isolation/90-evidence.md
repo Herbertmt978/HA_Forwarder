@@ -65,4 +65,25 @@
 - The repository has no project-specific `scripts/security-gate.sh`; no such
   security-gate result is claimed.
 
+## Final review fixes pending re-review
+
+- Final branch review found that removing host networking changes loopback
+  and local-only destination semantics: before 0.3.0, values including
+  `localhost`, `localhost.`, `localhost.localdomain`, `127.0.0.0/8`,
+  `0.0.0.0`, and `::1` or `[::1]` referred to the Home Assistant host or its
+  local network stack; in 0.3.0 they refer to the App container.
+- README, App documentation, and the changelog now require affected users to
+  replace loopback destinations with a hostname or IP reachable from the App
+  container before upgrading. Compatibility language is limited to
+  non-loopback destinations.
+- The current `192.168.50.89:5279` destination is a separate non-loopback LAN
+  host and is therefore unaffected by this semantic change.
+- The metadata security guard now normalizes all requested case-insensitive
+  YAML boolean aliases so `yes`, `on`, or `1` cannot bypass checks that reject
+  host networking and high-risk access, and `no`, `off`, or `0` cannot bypass
+  the AppArmor requirement.
+- `tests/test_config.sh` and `tests/test_run.sh` passed after the fixes, as did
+  Bash syntax checks, yamllint, actionlint, and `git diff --check`. Final branch
+  re-review remains pending.
+
 No pull-request CI, release, or live HAOS evidence exists for 0.3.0 yet.

@@ -54,11 +54,21 @@ container in a network namespace separate from the host, connects it to a
 Supervisor-managed internal bridge network, and publishes the configured TCP
 mapping.
 That metadata gives version 0.3.0 a calculated Supervisor security rating of 6,
-compared with version 0.2.1's observed rating of 5. Only host networking is
-removed: the published TCP listener remains unauthenticated and plaintext and
-does not add encryption, source filtering, or protocol validation. Keep it on
-a trusted LAN and do not expose its host port directly to the internet. A
-custom AppArmor profile limits the container's filesystem and process access.
+compared with version 0.2.1's observed rating of 5. The published TCP listener
+remains unauthenticated and plaintext and does not add encryption, source
+filtering, or protocol validation. Keep it on a trusted LAN and do not expose
+its host port directly to the internet. A custom AppArmor profile limits the
+container's filesystem and process access.
+
+Removing host networking changes loopback and other local-only destinations.
+Before upgrading,
+replace loopback or local-only `target_host` values, including `localhost`,
+`localhost.`, `localhost.localdomain`, any `127.0.0.0/8` address, `0.0.0.0`,
+and `::1` or `[::1]`, with a hostname or IP address reachable from the App
+container. In versions before 0.3.0 those values referred to the Home Assistant
+host or its local network stack; in version 0.3.0 they refer to the App
+container itself. Non-loopback destinations keep their existing forwarding
+behavior.
 
 ## Development
 

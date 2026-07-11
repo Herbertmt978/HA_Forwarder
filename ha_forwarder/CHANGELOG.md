@@ -8,6 +8,12 @@
 - **Breaking:** remove the `listen_port` option and move host-port selection to
   the App's **Network** section. The default host port remains TCP 5279; users
   of a custom port must re-enter it there.
+- **Breaking:** loopback and other local-only destinations now refer to the App
+  container. Before upgrading, replace values including `localhost`,
+  `localhost.`, `localhost.localdomain`, any `127.0.0.0/8` address,
+  `0.0.0.0`, and `::1` or `[::1]` with a hostname or IP address reachable
+  from the App container. Non-loopback destinations retain their forwarding
+  behavior.
 - Keep the container listener fixed at TCP 5279 and remove the no-longer-needed
   AppArmor `net_bind_service` capability.
 
