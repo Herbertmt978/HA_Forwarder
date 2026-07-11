@@ -47,8 +47,10 @@ body:
     id: network_mapping
     attributes:
       label: Current 5279/tcp host-port Network mapping
-      description: Enter the host port shown beside 5279/tcp in the App's Network section.
-      placeholder: "5279"
+      description: >-
+        For version 0.3.0 or later, enter the host port shown beside 5279/tcp
+        in the App's Network section. For an older version, enter N/A.
+      placeholder: "5279 or N/A"
     validations:
       required: true
 

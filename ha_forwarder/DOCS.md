@@ -121,10 +121,11 @@ and use **Check for updates**.
 
 ## Updating
 
-Review [CHANGELOG.md](CHANGELOG.md), update HA Forwarder from
-**Settings → Apps**, and note that version 0.3.0 is a breaking
-configuration-surface change. Users who kept the previous default host port
-need no port change: TCP 5279 remains the default.
+Review [CHANGELOG.md](CHANGELOG.md) before updating. Version 0.3.0 is a
+breaking configuration-surface change. Choose the path below that matches the
+port used by the earlier version.
+
+### Earlier version used a custom host port
 
 If an earlier version used a custom `listen_port`, migrate in this order:
 
@@ -142,9 +143,15 @@ If an earlier version used a custom `listen_port`, migrate in this order:
    and verify both the forwarding line in the App log and delivery to the
    destination service.
 
-After a default-port upgrade, confirm that the `5279/tcp` host mapping remains
-5279, then start or restart and perform the same verification. Existing valid
-destinations, connection limits, and timeouts remain unchanged.
+### Earlier version used the default host port
+
+If the earlier version used the default TCP 5279, update directly to version
+0.3.0 from **Settings → Apps**. After updating, confirm that the `5279/tcp`
+host mapping remains 5279. Remove a stale `listen_port` key if Home Assistant
+still displays it, save any changes, then start or restart HA Forwarder and
+verify the forwarding log and destination delivery.
+
+Existing valid destinations, connection limits, and timeouts remain unchanged.
 
 ## Support
 
