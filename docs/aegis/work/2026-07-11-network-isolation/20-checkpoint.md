@@ -2,12 +2,12 @@
 
 ## Current todo
 
-Task 2: implement bridge networking and retire the old listener owner.
+Task 3: align operator documentation, changelog, and architecture baseline.
 
 ## Active slice
 
-Edit App metadata, runtime, AppArmor, and translations only; make the approved
-RED contracts green without changing target behavior.
+Remove retired `listen_port` and host-network guidance, document the Network
+section and breaking upgrade, and align the baseline with the implementation.
 
 ## Completed todos
 
@@ -19,6 +19,8 @@ RED contracts green without changing target behavior.
 - Task 1 committed in `9ec4376` after both RED cases were observed.
 - Task 1 spec review passed.
 - Task 1 quality review found and then cleared YAML boolean normalization.
+- Task 2 committed in `9c89a74`; both config and runtime tests are GREEN.
+- Task 2 spec and code-quality/security reviews passed with no open issue.
 
 ## Evidence references
 
@@ -27,6 +29,8 @@ RED contracts green without changing target behavior.
 - Supervisor source confirms base 5, AppArmor +1, host network -1.
 - Config RED: host networking enabled and the required port mapping absent.
 - Runtime RED: legacy `listen_port: 1234` prevented the expected fixed-5279 log.
+- GREEN: fixed listener 5279 ignores stale `listen_port`; metadata uses mapped
+  `5279/tcp`; AppArmor no longer grants `net_bind_service`.
 
 ## Blockers
 
@@ -34,13 +38,14 @@ None.
 
 ## Resume state
 
-Open this checkpoint, then the plan. Continue with Task 2 production changes;
-do not edit operator documentation until the implementation tests are green.
+Open this checkpoint, then the plan. Continue with Task 3 documentation and
+baseline changes only; do not publish or deploy until their reviews pass.
 
 ## Drift check
 
 - Scope: aligned.
 - Compatibility: host port and route remain pinned to 5279.
-- New owners or adapters: none; tests now pin Supervisor as host-port owner.
-- Retirement: `host_network`, `listen_port`, and bind capability remain explicit.
+- New owners or adapters: none; Supervisor is the single host-port owner.
+- Retirement: runtime/config access is deleted; operator references remain to
+  be retired in Task 3.
 - Decision: continue.

@@ -17,8 +17,6 @@
 - Runtime baseline is covered by green main CI run `29145458928`; local Git Bash
   lacks `jq`, so runtime RED/GREEN will run in a temporary HAOS container and CI.
 
-## Runtime evidence status
-
 ## Task 1 RED evidence
 
 - `tests/test_config.sh` failed on v0.2.1 because `host_network` was enabled and
@@ -30,4 +28,14 @@
 - Quality review required case-insensitive YAML boolean checks; commit
   `9ec4376` fixed them and the re-review passed.
 
-No 0.3.0 GREEN or deployment evidence exists yet. The task remains active.
+## Task 2 GREEN evidence
+
+- `tests/test_config.sh`: passed with bridge mapping and security inputs.
+- `tests/test_run.sh`: passed with jq 1.7.1; stale `listen_port: 1234` could not
+  change fixed listener 5279.
+- POSIX/Bash syntax, yamllint, and diff checks passed.
+- Spec compliance review passed.
+- Code-quality/security review found no Critical or Important issue.
+- Commit `9c89a74` changes only config, runtime, AppArmor, and translations.
+
+No documentation, CI, release, or live HAOS evidence exists for 0.3.0 yet.
