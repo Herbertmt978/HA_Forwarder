@@ -1,22 +1,23 @@
 name: HA Forwarder
-version: "0.1.1"
+version: "0.2.0"
 slug: ha_forwarder
-description: Forward TCP traffic from the Home Assistant host to another TCP service.
-url: https://github.com/Herbertmt978/HA_Forwarder
+description: Forward TCP traffic from Home Assistant to another TCP service.
+url: https://github.com/Herbertmt978/HA_Forwarder/tree/main/ha_forwarder
 arch:
   - aarch64
   - amd64
 startup: services
-boot: auto
 init: false
-stage: stable
-apparmor: true
 host_network: true
 options:
   listen_port: 5279
-  target_host: ""
+  target_host: null
   target_port: 5279
+  max_connections: 64
+  connect_timeout: 15
 schema:
   listen_port: port
-  target_host: str
+  target_host: str(1,)
   target_port: port
+  max_connections: int(1,256)
+  connect_timeout: int(1,300)

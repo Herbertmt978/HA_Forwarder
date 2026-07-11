@@ -13,8 +13,6 @@ profile ha_forwarder flags=(attach_disconnected,mediate_deleted) {
 
   capability net_bind_service,
 
-  /** rix,
-
   /init rix,
   /run.sh rix,
   /command/** rix,
@@ -26,15 +24,16 @@ profile ha_forwarder flags=(attach_disconnected,mediate_deleted) {
 
   /etc/s6-overlay/** rix,
   /etc/s6/** rix,
-  /run/s6/** rwix,
+  /run/{s6,s6-rc*,service}/** ix,
   /etc/services.d/** rwix,
   /etc/cont-init.d/** rwix,
   /etc/cont-finish.d/** rwix,
 
   /data/options.json r,
   /data/** r,
-  /run/** rwk,
+  /run/{,**} rwk,
   /tmp/** rw,
+  /dev/tty rw,
   /proc/** r,
 
   deny /proc/kcore rwklx,
