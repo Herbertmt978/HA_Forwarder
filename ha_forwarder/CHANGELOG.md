@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- Restore option compatibility with Home Assistant Supervisor when saving a target host.
+
 ## 0.2.0
 
 - Require and validate the target before starting the forwarder.

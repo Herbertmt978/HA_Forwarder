@@ -48,10 +48,12 @@ jobs:
         run: yamllint .
 
       - name: Check shell scripts
-        run: shellcheck ha_forwarder/run.sh tests/test_run.sh
+        run: shellcheck ha_forwarder/run.sh tests/test_config.sh tests/test_run.sh
 
       - name: Test runtime configuration
-        run: bash tests/test_run.sh
+        run: |
+          bash tests/test_config.sh
+          bash tests/test_run.sh
 
       - name: Compile AppArmor profile
         run: sudo apparmor_parser --skip-kernel-load --skip-read-cache ha_forwarder/apparmor.txt
