@@ -12,8 +12,8 @@ LABEL \
     io.hass.version="${BUILD_VERSION}" \
     io.hass.type="app" \
     io.hass.arch="${BUILD_ARCH}" \
-    org.opencontainers.image.title="Home Assistant App: HA Forwarder" \
-    org.opencontainers.image.description="Configurable TCP forwarding for Home Assistant" \
+    org.opencontainers.image.title="Home Assistant App: TCP Relay" \
+    org.opencontainers.image.description="Forward device TCP connections through Home Assistant to another host." \
     org.opencontainers.image.source="https://github.com/Herbertmt978/HA_Forwarder" \
     org.opencontainers.image.licenses="MIT"
 

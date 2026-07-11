@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.1
+
+- The repository/README title is now `TCP Relay for Home Assistant`, and the
+  Home Assistant App display name is now `TCP Relay`.
+- This release makes no option, port, runtime, or migration change.
+
 ## 0.3.0
 
 - Replace host networking with a Supervisor-managed internal bridge network
