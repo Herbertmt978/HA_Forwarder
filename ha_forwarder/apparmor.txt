@@ -11,8 +11,6 @@ profile ha_forwarder flags=(attach_disconnected,mediate_deleted) {
   network unix stream,
   network unix dgram,
 
-  capability net_bind_service,
-
   /init rix,
   /run.sh rix,
   /command/** rix,
