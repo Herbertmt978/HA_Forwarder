@@ -37,9 +37,18 @@ body:
   - type: textarea
     id: configuration
     attributes:
-      label: Redacted configuration
-      description: Remove or replace any private hostnames and addresses.
+      label: Redacted App options
+      description: Paste the current options and remove or replace any private hostnames and addresses.
       render: yaml
+    validations:
+      required: true
+
+  - type: input
+    id: network_mapping
+    attributes:
+      label: Current 5279/tcp host-port Network mapping
+      description: Enter the host port shown beside 5279/tcp in the App's Network section.
+      placeholder: "5279"
     validations:
       required: true
 

@@ -49,13 +49,16 @@ verification, security details, limitations, and troubleshooting.
 
 ## Security
 
-HA Forwarder runs in an isolated bridge network and exposes only its
-Supervisor-managed TCP port. Removing host networking raises the Home
-Assistant Supervisor security rating from 5 to 6. The TCP listener is still
-unauthenticated and plaintext: it does not add encryption, source filtering,
-or protocol validation. Keep it on a trusted LAN and do not expose its host
-port directly to the internet. A custom AppArmor profile limits the
-container's filesystem and process access.
+HA Forwarder no longer shares the host network namespace. Supervisor runs the
+container in a network namespace separate from the host, connects it to a
+Supervisor-managed internal bridge network, and publishes the configured TCP
+mapping.
+That metadata gives version 0.3.0 a calculated Supervisor security rating of 6,
+compared with the live version 0.2.1 rating of 5. Only host networking is
+removed: the published TCP listener remains unauthenticated and plaintext and
+does not add encryption, source filtering, or protocol validation. Keep it on
+a trusted LAN and do not expose its host port directly to the internet. A
+custom AppArmor profile limits the container's filesystem and process access.
 
 ## Development
 

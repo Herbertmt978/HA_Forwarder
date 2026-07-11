@@ -72,8 +72,10 @@ locally before Supervisor starts it.
 Live Supervisor 2026.06.2 calculated version 0.2.1 at rating 5: base 5, custom
 AppArmor +1, and host networking -1. Version 0.3.0 implements Supervisor port
 mapping with a fixed container listener and removes the host-network penalty,
-raising the live rating to 6 without granting new access. Signing is currently
-hardcoded unavailable; ingress/auth access is not legitimate for this relay.
+so its metadata calculates to the expected rating 6 without granting new
+access. Live version 0.3.0 deployment evidence remains pending. Signing is
+currently hardcoded unavailable; ingress/auth access is not legitimate for
+this relay.
 
 ## Compatibility boundaries
 

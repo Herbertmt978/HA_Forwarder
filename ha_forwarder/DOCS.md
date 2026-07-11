@@ -40,17 +40,18 @@ start writes a line similar to this in the App log:
 ```
 
 The container listener always remains TCP 5279. Supervisor maps it to host TCP
-5279 by default. To choose a different host port, open **Settings → Apps →
-HA Forwarder → Configuration** and change the host port beside `5279/tcp` in
-the **Network** section. Point the sending device at the Home Assistant host
-address and that selected host port, then confirm that the destination service
-receives its connection or data.
+5279 by default. On version 0.3.0 or later, choose a different host port by
+opening **Settings → Apps → HA Forwarder → Configuration** and changing the
+host port beside `5279/tcp` in the **Network** section. Point the sending device
+at the Home Assistant host address and that selected host port, then confirm
+that the destination service receives its connection or data.
 
 ## Runtime behavior
 
-- The listener binds to all IPv4 interfaces inside the isolated bridge
-  network on container TCP 5279. Supervisor publishes only the host port
-  selected in the App's **Network** section.
+- The listener binds to all IPv4 interfaces in the container's network
+  namespace on container TCP 5279. That namespace is separate from the host
+  and connected to a Supervisor-managed internal bridge network; Supervisor
+  publishes the host port selected in the App's **Network** section.
 - Each inbound connection creates one child process and one new destination
   connection.
 - Once `max_connections` is reached, more sessions are not accepted until
@@ -71,12 +72,15 @@ authentication, client allowlist, rate limiting by source, traffic inspection,
 or protocol validation. AppArmor restricts the container, but it does not
 protect the TCP payload.
 
-The isolated bridge network removes the host-network namespace and raises the
-live Home Assistant Supervisor security rating from 5 to 6. The published TCP
-listener nevertheless remains unauthenticated and plaintext. Keep its host
-port on a trusted LAN and use the host or network firewall to limit access.
-Never expose it directly to the internet unless another appropriately secured
-network boundary protects it.
+Version 0.3.0 removes host networking. Supervisor runs the container on a
+Supervisor-managed internal bridge network within a network namespace separate
+from the host. Its metadata has a calculated Supervisor security rating of 6,
+compared with the live version 0.2.1 rating of 5; live version 0.3.0 validation
+remains pending deployment. Only the shared host network namespace was
+removed. The published TCP listener remains unauthenticated and plaintext.
+Keep its host port on a trusted LAN and use the host or network firewall to
+limit access. Never expose it directly to the internet unless another
+appropriately secured network boundary protects it.
 
 Do not configure the destination as the same Home Assistant host and published
 host port as the listener. Obvious localhost loops on TCP 5279 are rejected at
@@ -117,17 +121,30 @@ and use **Check for updates**.
 
 ## Updating
 
-Version 0.3.0 is a breaking configuration-surface change. Users who kept the
-previous default host port need no port change: TCP 5279 remains the default.
-If an earlier version used a custom `listen_port`, note that value before
-updating and set the same host port beside `5279/tcp` in the App's **Network**
-section. The container listener remains TCP 5279. Remove `listen_port` from the
-YAML configuration because version 0.3.0 no longer provides that option.
-
 Review [CHANGELOG.md](CHANGELOG.md), update HA Forwarder from
-**Settings → Apps**, and verify the forwarding line in the App log after the
-restart. Existing valid destinations, connection limits, and timeouts remain
-unchanged.
+**Settings → Apps**, and note that version 0.3.0 is a breaking
+configuration-surface change. Users who kept the previous default host port
+need no port change: TCP 5279 remains the default.
+
+If an earlier version used a custom `listen_port`, migrate in this order:
+
+1. While the earlier version is still installed, record its `listen_port`,
+   then stop the App.
+2. Update to (or install) version 0.3.0. The `5279/tcp` **Network** row is
+   supplied by version 0.3.0 and is not available in version 0.2.1. If the App
+   starts automatically, stop it again before continuing.
+3. Open **Settings → Apps → HA Forwarder → Configuration** and set the host
+   port beside `5279/tcp` in the **Network** section to the value recorded in
+   step 1. The container side remains TCP 5279.
+4. Remove a stale `listen_port` key if Home Assistant still displays it, then
+   save the remaining options and Network mapping.
+5. Start or restart HA Forwarder, point the clients at the selected host port,
+   and verify both the forwarding line in the App log and delivery to the
+   destination service.
+
+After a default-port upgrade, confirm that the `5279/tcp` host mapping remains
+5279, then start or restart and perform the same verification. Existing valid
+destinations, connection limits, and timeouts remain unchanged.
 
 ## Support
 
