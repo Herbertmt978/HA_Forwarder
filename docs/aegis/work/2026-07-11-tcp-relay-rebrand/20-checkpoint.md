@@ -20,23 +20,30 @@ Date: 2026-07-11
   App linter and amd64 image build.
 - Completed: final whole-branch review with advisory merge-ready verdict and no
   blocking or warning findings; fresh pre-commit validation repeated.
-- Active slice: Task 4, publish and merge the reviewed pull request.
-- Pending: PR review/merge; v0.3.1 release; live Home Assistant update and
-  monitoring.
+- Completed: Task 4 PR 6 merged at
+  `daaed914756629c81519244a76d52e2132eeabf0`; both PR and exact-main
+  validation passed, and GitHub Codex reported no major issue.
+- Completed: annotated tag and public release v0.3.1 point to the exact merge;
+  repository description and discovery topics are verified.
+- Completed: Task 5 in-place Home Assistant rollout, rollback backup,
+  configuration/security/runtime checks, observation, and controlled
+  end-to-end relay handshake.
+- No active product or rollout slice remains. This evidence-only follow-up
+  records closure.
+- Pending: none.
 - Evidence refs: 90-evidence.md, plan, current git status, baseline Docker test
   output.
 - Blocked on: nothing.
-- Next step: stage only reviewed files, commit, push, open the ready pull
-  request, and require green GitHub checks/review before merge.
+- Next step: retain rollback backups until the operator chooses to remove them,
+  and consider the documented S6 AppArmor startup cleanup as a separate future
+  maintenance change.
 
 ## ResumeStateHint
 
-Use worktree
-C:/Users/Ashby/.config/aegis/worktrees/HA_Forwarder/Herb-rebrand-tcp-relay
-on branch Herb/rebrand-tcp-relay. The ordinary Dropbox checkout is back on
-clean main. Read 10-intent.md, this checkpoint, the plan, and the initial
-baseline before resuming. Public metadata/docs are updated to 0.3.1, runtime
-files remain unchanged, and the full branding/config/runtime suite is green.
+No active slice remains. Live App 24118d52_ha_forwarder is TCP Relay 0.3.1,
+started with rating 6 and rollback backup e30e25d3 available. If a regression
+appears, stop 0.3.1, restore backup e30e25d3 for that App, and verify the 0.3.0
+route before resuming investigation.
 
 ## DriftCheckDraft
 
@@ -47,7 +54,7 @@ files remain unchanged, and the full branding/config/runtime suite is green.
 - New owner/fallback/adapter: none.
 - Retirement: old public name retires only from active surfaces; historical
   evidence remains.
-- Evidence sufficiency: implementation, slice reviews, council, full integration
-  validation, final review, and repeated pre-commit validation are complete;
-  remote PR checks remain.
-- Decision: continue.
+- Evidence sufficiency: local and remote validation, release identity, rollback,
+  Supervisor state, container process/network state, destination health,
+  observation, and a full TCP handshake are recorded.
+- Decision: close as complete; retain the rollback backups.

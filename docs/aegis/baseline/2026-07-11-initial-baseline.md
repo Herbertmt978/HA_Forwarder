@@ -1,4 +1,4 @@
-# HA Forwarder Initial Baseline
+# TCP Relay for Home Assistant Baseline
 
 Date: 2026-07-11
 
@@ -25,7 +25,9 @@ Date: 2026-07-11
 - Filesystem/process/network confinement: `ha_forwarder/apparmor.txt`.
 - User-facing operation and migration: `README.md` and
   `ha_forwarder/DOCS.md`.
-- Regression contracts: `tests/test_config.sh` and `tests/test_run.sh`.
+- Public identity and stable upgrade contract: `tests/test_branding.sh`.
+- Runtime and security contracts: `tests/test_config.sh` and
+  `tests/test_run.sh`.
 
 ## Contract inventory
 
@@ -35,8 +37,9 @@ Date: 2026-07-11
   in the App's **Network** section.
 - `target_host` is required; target port, connection limit, and connection
   timeout have bounded defaults.
-- Existing production route on HAOS is host port 5279 to
-  `192.168.50.89:5279` with two long-lived clients.
+- The production route on HAOS is host port 5279 to
+  `192.168.50.89:5279`. Two long-lived clients were observed on version 0.3.0
+  earlier on 2026-07-11; both were offline before the 0.3.1 update.
 - UDP, inbound IPv6, TLS, authentication, source allowlists, and payload
   inspection are outside scope.
 
@@ -51,6 +54,8 @@ documented options file and container network.
 
 - `tests/test_config.sh` verifies Supervisor compatibility invariants.
 - `tests/test_run.sh` substitutes `socat` and checks exact arguments and errors.
+- `tests/test_branding.sh` pins the public name while preserving the existing
+  slug and repository URLs.
 - CI runs yamllint, ShellCheck, AppArmor compilation, the tests, the Home
   Assistant App linter, and an amd64 image build.
 
@@ -70,10 +75,17 @@ locally before Supervisor starts it.
 ## Last review findings
 
 Live Supervisor 2026.06.2 calculated version 0.2.1 at rating 5: base 5, custom
-AppArmor +1, and host networking -1. Live version 0.3.0 now reports rating 6
-with Supervisor port mapping, a fixed container listener, custom AppArmor, and
-no host networking or new permissions. The bridge container remained at zero
-restarts with no AppArmor denial during rollout verification. Signing is
+AppArmor +1, and host networking -1. Live version 0.3.1 reports rating 6 with
+Supervisor port mapping, a fixed container listener, custom AppArmor, and no
+host networking or new permissions. Its container remained at zero restarts,
+and a controlled connection through the published Home Assistant port reached
+the configured destination successfully.
+
+Both the earlier 0.3.0 start and the 0.3.1 start produced the same two
+non-blocking AppArmor denials while S6 listed /etc/fix-attrs.d/ and
+/etc/services.d/. S6 and the relay continued normally, and no further denial
+appeared during observation. Treat eliminating that pre-existing startup noise
+as a future confinement-maintenance task, not a 0.3.1 regression. Signing is
 currently hardcoded unavailable; ingress/auth access is not legitimate for
 this relay.
 
@@ -86,3 +98,8 @@ who used a custom pre-0.3.0 `listen_port` must set that host port in the App's
 transparency, boot behavior, watchdog, and auto-update behavior remain
 unchanged. Pre-0.3.0 loopback or other local-only destinations must instead be
 replaced with an address reachable from the App container.
+
+The public repository/README title is TCP Relay for Home Assistant and the App
+display name is TCP Relay. The directory, installed slug, AppArmor profile,
+repository URL, container image namespace, and development image tag retain
+their existing ha_forwarder / HA_Forwarder compatibility identities.

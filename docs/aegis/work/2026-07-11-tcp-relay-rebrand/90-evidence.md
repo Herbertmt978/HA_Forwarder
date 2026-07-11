@@ -113,5 +113,66 @@ Date: 2026-07-11
   AppArmor compilation, pinned Home Assistant App linter, actionlint, amd64
   image build, diff check, secret-pattern scan, and active-name scan all exited
   0.
-- Remote Actions, GitHub review, tag/release state, and live Supervisor rollout
-  remain future evidence and are not claimed here.
+- At the implementation-commit boundary, remote Actions, GitHub review,
+  tag/release state, and live Supervisor rollout were still pending. Their
+  subsequently observed evidence follows.
+
+## Pull request and release evidence
+
+- Pull request 6 merged after both Validate jobs passed and the GitHub Codex
+  review reported no major issue on the reviewed commit.
+- Exact-main Validate run 29171114678 passed on merge commit
+  daaed914756629c81519244a76d52e2132eeabf0.
+- Annotated tag v0.3.1 peels to the same merge commit.
+- Public release:
+  https://github.com/Herbertmt978/HA_Forwarder/releases/tag/v0.3.1
+- The repository description is the approved tagline. Verified topics are
+  home-assistant, home-assistant-addon, home-assistant-app, home-automation,
+  socat, tcp-forwarding, tcp-proxy, and tcp-relay.
+
+## Live Home Assistant rollout
+
+- Environment: Home Assistant OS 18.1, Home Assistant 2026.7.2, Supervisor
+  2026.06.2, amd64 HAOS VM 100.
+- Before maintenance, live 0.3.0 was started at rating 6 on bridge networking
+  with auto-update true, boot auto, watchdog true, host mapping 5279/tcp to
+  5279, and target 192.168.50.89:5279.
+- The two previously observed long-lived clients were already offline before
+  maintenance. No active device session was interrupted by the update.
+- Partial backup e30e25d3 was created and verified to contain installed App
+  24118d52_ha_forwarder version 0.3.0.
+- Store reload offered 0.3.1 on the existing slug. The App was stopped manually,
+  updated in place, and remained stopped until its post-update state was
+  inspected.
+- Before start, Supervisor reported name TCP Relay, version/latest 0.3.1,
+  rating 6, custom AppArmor, host_network false, the same four options, and the
+  same Network mapping.
+- After start, container addon_24118d52_ha_forwarder used the 0.3.1 image,
+  bridge network mode, and remained running with zero restarts. Docker reported
+  host mappings 0.0.0.0:5279 and [::]:5279; the App runtime remains the
+  documented IPv4 listener.
+- The live process remained:
+  socat -d -d TCP-LISTEN:5279,fork,reuseaddr,max-children=64
+  TCP:192.168.50.89:5279,connect-timeout=15.
+- Direct destination connectivity from the App container succeeded. Grott was
+  running with zero restarts, listening on IPv4/IPv6 TCP 5279, and reported no
+  recent error, exception, fatal, or traceback lines.
+- After the observation window, TCP Relay remained started at rating 6 with
+  zero restarts and no relay error. No device was online, so a controlled TCP
+  connection to Home Assistant host port 5279 verified the complete path:
+  listener acceptance, child fork, connection to 192.168.50.89:5279, transfer
+  loop start, clean EOF, and child exit status 0.
+- Only the 0.3.1 App container and image remain installed. Version 0.3.0 is
+  retained only in rollback backup e30e25d3; the earlier 0.2.1 rollback backup
+  30cd2c41 remains available.
+
+## AppArmor observation
+
+- Version 0.3.1 startup produced two denials for S6 directory reads at
+  /etc/fix-attrs.d/ and /etc/services.d/.
+- The exact same two denial shapes were present at the earlier 0.3.0 start.
+  They did not prevent S6 startup, the listener, destination connections, or
+  the controlled end-to-end relay.
+- No additional denial appeared during observation. This is documented as
+  pre-existing, non-blocking startup denials and not attributed to the 0.3.1
+  rebrand.
