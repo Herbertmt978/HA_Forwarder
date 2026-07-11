@@ -3,11 +3,53 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_PATH="${ROOT_DIR}/ha_forwarder/config.yaml"
+APPARMOR_PATH="${ROOT_DIR}/ha_forwarder/apparmor.txt"
 
 fail() {
     printf 'FAIL: %s\n' "${1}" >&2
     exit 1
 }
+
+failures=0
+record_failure() {
+    printf 'FAIL: %s\n' "${1}" >&2
+    failures=$((failures + 1))
+}
+
+top_level_boolean() {
+    awk -v key="${1}:" '
+        /^[^[:space:]#]/ && $1 == key { print tolower($2); exit }
+    ' "${CONFIG_PATH}"
+}
+
+host_network="$(top_level_boolean host_network)"
+[[ "${host_network}" != "true" ]] ||
+    record_failure "host_network must not be enabled"
+
+mapped_port="$(
+    awk '
+        /^ports:[[:space:]]*($|#)/ { in_ports = 1; next }
+        in_ports && /^[^[:space:]#]/ { exit }
+        in_ports && $1 == "5279/tcp:" { print $2; exit }
+    ' "${CONFIG_PATH}"
+)"
+[[ "${mapped_port}" == "5279" ]] ||
+    record_failure "ports must map container 5279/tcp to host port 5279; got '${mapped_port}'"
+
+for high_risk_flag in full_access docker_api host_pid host_uts; do
+    high_risk_value="$(top_level_boolean "${high_risk_flag}")"
+    [[ "${high_risk_value}" != "true" ]] ||
+        record_failure "${high_risk_flag} must not be enabled"
+done
+
+[[ -s "${APPARMOR_PATH}" ]] ||
+    record_failure "custom AppArmor profile must remain at ${APPARMOR_PATH}"
+
+apparmor="$(top_level_boolean apparmor)"
+[[ "${apparmor}" != "false" ]] ||
+    record_failure "custom AppArmor profile must not be disabled"
+
+[[ "${failures}" -eq 0 ]] || exit 1
 
 target_host_schema="$(
     awk '

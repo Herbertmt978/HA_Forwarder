@@ -88,8 +88,8 @@ expect_failure() {
 run_success \
     "configured" \
     '{"listen_port":1234,"target_host":"example.local","target_port":5678,"max_connections":12,"connect_timeout":9}' \
-    "[INFO] Forwarding TCP 1234 to example.local:5678 (max 12 connections, 9s connect timeout)" \
-    "TCP-LISTEN:1234,fork,reuseaddr,max-children=12" \
+    "[INFO] Forwarding TCP 5279 to example.local:5678 (max 12 connections, 9s connect timeout)" \
+    "TCP-LISTEN:5279,fork,reuseaddr,max-children=12" \
     "TCP:example.local:5678,connect-timeout=9"
 
 run_success \
