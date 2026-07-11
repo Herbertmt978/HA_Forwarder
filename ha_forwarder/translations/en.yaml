@@ -1,0 +1,16 @@
+configuration:
+  listen_port:
+    name: Listen port
+    description: TCP port to open on the Home Assistant host.
+  target_host:
+    name: Target host
+    description: Destination DNS name or IP address.
+  target_port:
+    name: Target port
+    description: TCP port used by the destination service.
+  max_connections:
+    name: Maximum connections
+    description: Maximum number of simultaneous forwarding sessions.
+  connect_timeout:
+    name: Connection timeout
+    description: Seconds allowed to establish each destination connection.

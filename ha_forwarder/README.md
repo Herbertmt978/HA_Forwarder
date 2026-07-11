@@ -1,19 +1,20 @@
-# HA Forwarder
+# Home Assistant App: HA Forwarder
 
-HA Forwarder listens on a TCP port on the Home Assistant host and forwards incoming traffic to another TCP service.
+_Forward raw TCP traffic from the Home Assistant host to another service._
 
-## Configuration
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
 
-```yaml
-listen_port: 5279
-target_host: "example.local"
-target_port: 5279
-```
+HA Forwarder accepts concurrent TCP connections on a configurable host port
+and relays each connection to one configured destination. Connection and
+target setup limits keep a failed or overloaded destination from creating an
+unbounded number of child processes.
 
-- `listen_port`: the TCP port Home Assistant should listen on.
-- `target_host`: the hostname or IP address to forward traffic to.
-- `target_port`: the TCP port on the target service.
+This App uses host networking. It does not provide authentication, encryption,
+client filtering, UDP forwarding, or protocol conversion. Use it only on a
+trusted network.
 
-The add-on uses host networking so the listen port can be changed directly in the add-on configuration.
+Read the [full documentation](DOCS.md) before exposing the listen port.
 
-The container runs with a custom AppArmor profile to restrict filesystem and process access while allowing TCP forwarding.
+[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
+[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
