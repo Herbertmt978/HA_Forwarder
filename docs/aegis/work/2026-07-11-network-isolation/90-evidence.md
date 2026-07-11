@@ -19,4 +19,15 @@
 
 ## Runtime evidence status
 
-No 0.3.0 runtime or deployment evidence exists yet. The task remains active.
+## Task 1 RED evidence
+
+- `tests/test_config.sh` failed on v0.2.1 because `host_network` was enabled and
+  `5279/tcp: 5279` was absent.
+- `tests/test_run.sh` failed in an isolated v0.2.1 environment because the
+  runtime consumed stale `listen_port: 1234` instead of fixed port 5279.
+- Bash syntax and diff checks passed.
+- Spec compliance review passed.
+- Quality review required case-insensitive YAML boolean checks; commit
+  `9ec4376` fixed them and the re-review passed.
+
+No 0.3.0 GREEN or deployment evidence exists yet. The task remains active.
