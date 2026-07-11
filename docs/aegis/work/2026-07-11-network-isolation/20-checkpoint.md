@@ -2,12 +2,12 @@
 
 ## Current todo
 
-Task 3: align operator documentation, changelog, and architecture baseline.
+Task 4: publish, review, and merge the version 0.3.0 pull request.
 
 ## Active slice
 
-Remove retired `listen_port` and host-network guidance, document the Network
-section and breaking upgrade, and align the baseline with the implementation.
+Run the complete branch verification, publish the reviewed branch, require
+green GitHub checks, then merge only if no review finding remains.
 
 ## Completed todos
 
@@ -21,6 +21,13 @@ section and breaking upgrade, and align the baseline with the implementation.
 - Task 1 quality review found and then cleared YAML boolean normalization.
 - Task 2 committed in `9c89a74`; both config and runtime tests are GREEN.
 - Task 2 spec and code-quality/security reviews passed with no open issue.
+- Task 3 documentation and metadata changes are complete.
+- Task 3 spec review passed.
+- Task 3 quality review found an unsafe custom-port instruction order and
+  imprecise network-boundary language; iterative fixes cleared the final
+  quality re-review with no Critical or Important issue.
+- A checksum-verified jq 1.7.1 binary was used for a fresh local run of both
+  configuration and runtime tests; both passed.
 
 ## Evidence references
 
@@ -31,6 +38,10 @@ section and breaking upgrade, and align the baseline with the implementation.
 - Runtime RED: legacy `listen_port: 1234` prevented the expected fixed-5279 log.
 - GREEN: fixed listener 5279 ignores stale `listen_port`; metadata uses mapped
   `5279/tcp`; AppArmor no longer grants `net_bind_service`.
+- Task 3 documents the two upgrade paths explicitly: custom-port users record
+  the old value before updating; default-port users update directly and verify
+  the `5279/tcp` mapping remains 5279.
+- yamllint, actionlint, and `git diff --check` pass on the completed branch.
 
 ## Blockers
 
@@ -38,14 +49,14 @@ None.
 
 ## Resume state
 
-Open this checkpoint, then the plan. Continue with Task 3 documentation and
-baseline changes only; do not publish or deploy until their reviews pass.
+Open this checkpoint, then the plan. Continue with final branch review and PR
+publication. Do not merge, tag, release, or deploy until required checks pass.
 
 ## Drift check
 
 - Scope: aligned.
 - Compatibility: host port and route remain pinned to 5279.
 - New owners or adapters: none; Supervisor is the single host-port owner.
-- Retirement: runtime/config access is deleted; operator references remain to
-  be retired in Task 3.
+- Retirement: runtime/config access and current operator guidance are retired;
+  `listen_port` remains only in explicit migration/history contexts.
 - Decision: continue.

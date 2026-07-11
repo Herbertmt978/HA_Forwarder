@@ -14,8 +14,7 @@
 - `yamllint .`: passed before implementation.
 - `actionlint .github/workflows/validate.yml`: passed before implementation.
 - `git diff --check`: passed before implementation.
-- Runtime baseline is covered by green main CI run `29145458928`; local Git Bash
-  lacks `jq`, so runtime RED/GREEN will run in a temporary HAOS container and CI.
+- Runtime baseline is covered by green main CI run `29145458928`.
 
 ## Task 1 RED evidence
 
@@ -38,4 +37,32 @@
 - Code-quality/security review found no Critical or Important issue.
 - Commit `9c89a74` changes only config, runtime, AppArmor, and translations.
 
-No documentation, CI, release, or live HAOS evidence exists for 0.3.0 yet.
+## Task 3 documentation evidence
+
+- Current documentation describes a Supervisor-managed internal bridge network
+  in a network namespace separate from the host; it does not overstate that
+  boundary as a private or isolated network.
+- The version 0.3.0 breaking upgrade has distinct custom-port and default-port
+  paths. Custom-port users record the legacy value before installing 0.3.0.
+- Rating 6 is described as a metadata calculation pending live deployment,
+  while the plaintext, unauthenticated trusted-LAN boundary remains explicit.
+- The issue form captures both redacted App options and the `5279/tcp` Network
+  mapping, with `N/A` guidance for pre-0.3.0 reports.
+- Spec review passed. Quality review findings were corrected in focused
+  follow-up commits; the final re-review passed with no Critical or Important
+  issue.
+
+## Completed-branch local evidence
+
+- `tests/test_config.sh`: passed.
+- `tests/test_run.sh`: passed with checksum-verified jq 1.7.1.
+- `yamllint .`: passed.
+- `actionlint`: passed.
+- `git diff --check main...HEAD`: passed.
+- `ha_forwarder/run.sh` remains tracked executable (`100755`).
+- Docker Desktop was unavailable locally, so the container build, ShellCheck,
+  AppArmor compile, and Home Assistant App linter remain CI gates.
+- The repository has no project-specific `scripts/security-gate.sh`; no such
+  security-gate result is claimed.
+
+No pull-request CI, release, or live HAOS evidence exists for 0.3.0 yet.

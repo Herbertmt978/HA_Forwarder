@@ -54,7 +54,7 @@ container in a network namespace separate from the host, connects it to a
 Supervisor-managed internal bridge network, and publishes the configured TCP
 mapping.
 That metadata gives version 0.3.0 a calculated Supervisor security rating of 6,
-compared with the live version 0.2.1 rating of 5. Only host networking is
+compared with version 0.2.1's observed rating of 5. Only host networking is
 removed: the published TCP listener remains unauthenticated and plaintext and
 does not add encryption, source filtering, or protocol validation. Keep it on
 a trusted LAN and do not expose its host port directly to the internet. A

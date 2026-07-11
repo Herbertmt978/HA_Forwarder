@@ -4,7 +4,7 @@
 
 - Replace host networking with a Supervisor-managed internal bridge network
   and port mapping. Version 0.3.0 metadata calculates to security rating 6,
-  compared with the live version 0.2.1 rating of 5.
+  compared with version 0.2.1's observed rating of 5.
 - **Breaking:** remove the `listen_port` option and move host-port selection to
   the App's **Network** section. The default host port remains TCP 5279; users
   of a custom port must re-enter it there.

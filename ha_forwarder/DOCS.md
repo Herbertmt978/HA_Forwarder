@@ -75,9 +75,9 @@ protect the TCP payload.
 Version 0.3.0 removes host networking. Supervisor runs the container on a
 Supervisor-managed internal bridge network within a network namespace separate
 from the host. Its metadata has a calculated Supervisor security rating of 6,
-compared with the live version 0.2.1 rating of 5; live version 0.3.0 validation
-remains pending deployment. Only the shared host network namespace was
-removed. The published TCP listener remains unauthenticated and plaintext.
+compared with version 0.2.1's observed rating of 5. Only the shared host
+network namespace was removed. The published TCP listener remains
+unauthenticated and plaintext.
 Keep its host port on a trusted LAN and use the host or network firewall to
 limit access. Never expose it directly to the internet unless another
 appropriately secured network boundary protects it.

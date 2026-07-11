@@ -15,7 +15,7 @@ from creating an unbounded number of child processes.
 The App no longer shares the host network namespace. Supervisor runs it on a
 Supervisor-managed internal bridge network within a network namespace separate
 from the host, for a calculated version 0.3.0 security rating of 6 compared
-with the live version 0.2.1 rating of 5. Only host networking is removed: the
+with version 0.2.1's observed rating of 5. Only host networking is removed: the
 published TCP listener remains unauthenticated and plaintext and does not
 provide client filtering, UDP forwarding, or protocol conversion. Use it only
 on a trusted LAN.
