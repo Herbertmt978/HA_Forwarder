@@ -108,8 +108,8 @@ and use **Check for updates**.
 
 Review [CHANGELOG.md](CHANGELOG.md), update HA Forwarder from
 **Settings → Apps**, and verify the forwarding line in the App log after the
-restart. Version 0.2.0 keeps existing valid destinations working and supplies
-defaults for the new connection limits.
+restart. Version 0.2.0 and later keep existing valid destinations working and
+supply defaults for the new connection limits.
 
 ## Support
 
