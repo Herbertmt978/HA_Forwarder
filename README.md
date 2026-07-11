@@ -1,14 +1,23 @@
+<div align="center">
+
 # HA Forwarder
 
-HA Forwarder is a lightweight Home Assistant App (formerly add-on) that
-relays raw TCP traffic from the Home Assistant host to another TCP service.
-It is useful when a device can only connect to the Home Assistant address
-while the service that should receive its traffic runs elsewhere.
+**A lightweight Home Assistant App that forwards raw TCP traffic to another service.**
 
-![Supports aarch64 Architecture][aarch64-shield]
-![Supports amd64 Architecture][amd64-shield]
+[![Home Assistant App security rating: 6 out of 6][security-rating-badge]][security-rating-link]
+[![Validate workflow status][validation-badge]][validation-link]
+[![Latest release][release-badge]][release-link]
+[![MIT license][license-badge]][license-link]
+[![Supported architectures: amd64 and aarch64][architectures-badge]][architectures-link]
+[![AppArmor custom profile][apparmor-badge]][apparmor-link]
 
 [![Open your Home Assistant instance and add this App repository][install-badge]][install-link]
+
+</div>
+
+HA Forwarder relays raw TCP traffic from the Home Assistant host to another
+TCP service. It is useful when a device can only connect to the Home Assistant
+address while the service that should receive its traffic runs elsewhere.
 
 ## Requirements
 
@@ -53,16 +62,17 @@ HA Forwarder no longer shares the host network namespace. Supervisor runs the
 container in a network namespace separate from the host, connects it to a
 Supervisor-managed internal bridge network, and publishes the configured TCP
 mapping.
-That metadata gives version 0.3.0 a calculated Supervisor security rating of 6,
-compared with version 0.2.1's observed rating of 5. The published TCP listener
-remains unauthenticated and plaintext and does not add encryption, source
-filtering, or protocol validation. Keep it on a trusted LAN and do not expose
-its host port directly to the internet. A custom AppArmor profile limits the
+The [verified version 0.3.0 rollout][rollout-evidence-link] reports the maximum
+rating of 6 on [Home Assistant's current 1-to-6 scale][security-rating-link];
+version 0.2.1 was observed at rating 5. The published TCP listener remains
+unauthenticated and plaintext and does not add encryption, source filtering,
+or protocol validation. Keep it on a trusted LAN and do not expose its host
+port directly to the internet. A custom AppArmor profile limits the
 container's filesystem and process access.
 
 Removing host networking changes loopback and other local-only destinations.
-Before upgrading,
-replace loopback or local-only `target_host` values, including `localhost`,
+Before upgrading, replace loopback or local-only `target_host` values,
+including `localhost`,
 `localhost.`, `localhost.localdomain`, any `127.0.0.0/8` address, `0.0.0.0`,
 and `::1` or `[::1]`, with a hostname or IP address reachable from the App
 container. In versions before 0.3.0 those values referred to the Home Assistant
@@ -93,7 +103,18 @@ and relevant App logs.
 
 HA Forwarder is available under the [MIT License](LICENSE).
 
-[aarch64-shield]: https://img.shields.io/badge/aarch64-yes-green.svg
-[amd64-shield]: https://img.shields.io/badge/amd64-yes-green.svg
+[security-rating-badge]: https://img.shields.io/badge/App%20security-6%20%2F%206-brightgreen?logo=homeassistant&logoColor=white
+[security-rating-link]: https://developers.home-assistant.io/docs/apps/security/
+[validation-badge]: https://github.com/Herbertmt978/HA_Forwarder/actions/workflows/validate.yml/badge.svg?branch=main&event=push
+[validation-link]: https://github.com/Herbertmt978/HA_Forwarder/actions/workflows/validate.yml?query=branch%3Amain
+[release-badge]: https://img.shields.io/github/v/release/Herbertmt978/HA_Forwarder?display_name=tag&sort=semver&logo=github&label=release
+[release-link]: https://github.com/Herbertmt978/HA_Forwarder/releases/latest
+[license-badge]: https://img.shields.io/github/license/Herbertmt978/HA_Forwarder?logo=opensourceinitiative
+[license-link]: LICENSE
+[architectures-badge]: https://img.shields.io/badge/architectures-amd64%20%7C%20aarch64-blue?logo=linux&logoColor=white
+[architectures-link]: ha_forwarder/config.yaml
+[apparmor-badge]: https://img.shields.io/badge/AppArmor-custom%20profile-success?logo=ubuntu&logoColor=white
+[apparmor-link]: ha_forwarder/apparmor.txt
+[rollout-evidence-link]: docs/aegis/work/2026-07-11-network-isolation/90-evidence.md
 [install-badge]: https://my.home-assistant.io/badges/supervisor_store.svg
 [install-link]: https://my.home-assistant.io/redirect/supervisor_store/?repository_url=https%3A%2F%2Fgithub.com%2FHerbertmt978%2FHA_Forwarder
