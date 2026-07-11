@@ -1,4 +1,4 @@
-# Evidence Bundle Draft
+# Evidence Bundle
 
 ## Planning evidence
 
@@ -44,8 +44,9 @@
   boundary as a private or isolated network.
 - The version 0.3.0 breaking upgrade has distinct custom-port and default-port
   paths. Custom-port users record the legacy value before installing 0.3.0.
-- Rating 6 is described as a metadata calculation pending live deployment,
-  while the plaintext, unauthenticated trusted-LAN boundary remains explicit.
+- Rating 6 was initially documented as a metadata calculation pending live
+  deployment, while the plaintext, unauthenticated trusted-LAN boundary
+  remained explicit.
 - The issue form captures both redacted App options and the `5279/tcp` Network
   mapping, with `N/A` guidance for pre-0.3.0 reports.
 - Spec review passed. Quality review findings were corrected in focused
@@ -90,4 +91,43 @@
   regression check rather than a runtime security boundary; code review remains
   the backstop for those forms.
 
-No pull-request CI, release, or live HAOS evidence exists for 0.3.0 yet.
+## Pull request and release evidence
+
+- Pull request 3 merged after both `Validate` jobs passed in run `29150364699`.
+- The configured Codex review reported no major issue on the reviewed branch.
+- Exact-merge run `29150529095` passed on `main` commit `ae6650b`, including the
+  Home Assistant App linter, ShellCheck, both tests, AppArmor compilation, and
+  the amd64 container build.
+- Annotated tag `v0.3.0` and the published latest GitHub release both resolve to
+  commit `ae6650b`.
+
+## Live HAOS evidence
+
+- Partial backup `30cd2c41` was created before maintenance and verified to
+  contain HA Forwarder version 0.2.1.
+- Supervisor 2026.06.2 installed version 0.3.0 while the App was stopped with
+  boot set to manual and watchdog disabled.
+- Before start, the stale `listen_port` value was removed and the saved state
+  was verified as target `192.168.50.89:5279`, `max_connections: 64`,
+  `connect_timeout: 15`, and Network mapping `5279/tcp: 5279`.
+- The running App reports rating 6, `host_network: false`, bridge address
+  `172.30.33.3`, auto boot, auto-update, watchdog, and no update available.
+- Docker published host TCP 5279 to container TCP 5279 on the version 0.3.0
+  image and reported zero restarts throughout the stability window.
+- Both source sessions (`192.168.51.47` and `192.168.50.39`) and both target
+  sessions to `192.168.50.89:5279` remained established inside the container.
+- Grott processed packets and published both Home Assistant state topics in
+  consecutive 11:18, 11:19, and 11:20 UTC cycles after cutover.
+- Supervisor remained healthy and supported. App logs contained no error,
+  failure, denial, fatal, exception, or traceback, and the kernel journal
+  contained no relevant AppArmor denial.
+
+## Residual risk and rollback
+
+- The TCP relay remains plaintext and unauthenticated and must stay on a
+  trusted LAN.
+- Custom host ports and pre-0.3.0 loopback/local-only destinations require the
+  documented manual migration.
+- The trusted-metadata AWK guard does not parse contrived YAML anchors or
+  quoted keys; review remains the backstop.
+- Backup `30cd2c41` is retained as the version 0.2.1 rollback point.

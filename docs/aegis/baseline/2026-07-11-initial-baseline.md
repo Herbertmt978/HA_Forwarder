@@ -70,10 +70,10 @@ locally before Supervisor starts it.
 ## Last review findings
 
 Live Supervisor 2026.06.2 calculated version 0.2.1 at rating 5: base 5, custom
-AppArmor +1, and host networking -1. Version 0.3.0 implements Supervisor port
-mapping with a fixed container listener and removes the host-network penalty,
-so its metadata calculates to the expected rating 6 without granting new
-access. Live version 0.3.0 deployment evidence remains pending. Signing is
+AppArmor +1, and host networking -1. Live version 0.3.0 now reports rating 6
+with Supervisor port mapping, a fixed container listener, custom AppArmor, and
+no host networking or new permissions. The bridge container remained at zero
+restarts with no AppArmor denial during rollout verification. Signing is
 currently hardcoded unavailable; ingress/auth access is not legitimate for
 this relay.
 
@@ -82,5 +82,7 @@ this relay.
 External clients continue using the Home Assistant address and host port 5279
 by default, while the container listener remains fixed at TCP 5279. Operators
 who used a custom pre-0.3.0 `listen_port` must set that host port in the App's
-**Network** section. Destination, limits, timeout, byte transparency, boot
-behavior, watchdog, and auto-update behavior remain unchanged.
+**Network** section. The direct LAN-IP production route, limits, timeout, byte
+transparency, boot behavior, watchdog, and auto-update behavior remain
+unchanged. Pre-0.3.0 loopback or other local-only destinations must instead be
+replaced with an address reachable from the App container.
