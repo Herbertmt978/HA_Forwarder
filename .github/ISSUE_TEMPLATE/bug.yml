@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible HA Forwarder problem
+description: Report a reproducible TCP Relay problem
 title: "[Bug]: "
 body:
   - type: markdown
@@ -11,8 +11,8 @@ body:
   - type: input
     id: app_version
     attributes:
-      label: HA Forwarder version
-      placeholder: "0.3.0"
+      label: TCP Relay version
+      placeholder: "0.3.1"
     validations:
       required: true
 

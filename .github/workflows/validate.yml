@@ -48,10 +48,16 @@ jobs:
         run: yamllint .
 
       - name: Check shell scripts
-        run: shellcheck ha_forwarder/run.sh tests/test_config.sh tests/test_run.sh
-
-      - name: Test runtime configuration
         run: |
+          shellcheck \
+            ha_forwarder/run.sh \
+            tests/test_branding.sh \
+            tests/test_config.sh \
+            tests/test_run.sh
+
+      - name: Test runtime configuration and branding
+        run: |
+          bash tests/test_branding.sh
           bash tests/test_config.sh
           bash tests/test_run.sh
 

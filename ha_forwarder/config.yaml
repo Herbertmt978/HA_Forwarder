@@ -1,9 +1,9 @@
-name: HA Forwarder
-version: "0.3.0"
+name: TCP Relay
+version: "0.3.1"
 breaking_versions:
   - "0.3.0"
 slug: ha_forwarder
-description: Forward TCP traffic from Home Assistant to another TCP service.
+description: Forward device TCP connections through Home Assistant to another host.
 url: https://github.com/Herbertmt978/HA_Forwarder/tree/main/ha_forwarder
 arch:
   - aarch64
@@ -13,7 +13,7 @@ init: false
 ports:
   5279/tcp: 5279
 ports_description:
-  5279/tcp: HA Forwarder TCP listener
+  5279/tcp: TCP Relay listener
 options:
   target_host: null
   target_port: 5279

@@ -1,8 +1,8 @@
-# Home Assistant App: HA Forwarder
+# Home Assistant App: TCP Relay
 
-HA Forwarder listens for raw TCP connections on a fixed listener at container
+TCP Relay listens for raw TCP connections on a fixed listener at container
 TCP 5279. Home Assistant Supervisor publishes that listener on the Home
-Assistant host, and HA Forwarder relays each connection to a single destination
+Assistant host, and TCP Relay relays each connection to a single destination
 service.
 
 ## Before you start
@@ -32,7 +32,7 @@ connect_timeout: 15
 
 `target_host` cannot be blank and must not contain whitespace or commas.
 
-After saving the configuration, start or restart HA Forwarder. A successful
+After saving the configuration, start or restart TCP Relay. A successful
 start writes a line similar to this in the App log:
 
 ```text
@@ -41,7 +41,7 @@ start writes a line similar to this in the App log:
 
 The container listener always remains TCP 5279. Supervisor maps it to host TCP
 5279 by default. On version 0.3.0 or later, choose a different host port by
-opening **Settings → Apps → HA Forwarder → Configuration** and changing the
+opening **Settings → Apps → TCP Relay → Configuration** and changing the
 host port beside `5279/tcp` in the **Network** section. Point the sending device
 at the Home Assistant host address and that selected host port, then confirm
 that the destination service receives its connection or data.
@@ -67,7 +67,7 @@ that the destination service receives its connection or data.
 
 ## Security and limitations
 
-HA Forwarder is a transport relay, not a security gateway. It provides no TLS,
+TCP Relay is a transport relay, not a security gateway. It provides no TLS,
 authentication, client allowlist, rate limiting by source, traffic inspection,
 or protocol validation. AppArmor restricts the container, but it does not
 protect the TCP payload.
@@ -148,12 +148,12 @@ If an earlier version used a custom `listen_port`, migrate in this order:
 2. Update to (or install) version 0.3.0. The `5279/tcp` **Network** row is
    supplied by version 0.3.0 and is not available in version 0.2.1. If the App
    starts automatically, stop it again before continuing.
-3. Open **Settings → Apps → HA Forwarder → Configuration** and set the host
+3. Open **Settings → Apps → TCP Relay → Configuration** and set the host
    port beside `5279/tcp` in the **Network** section to the value recorded in
    step 1. The container side remains TCP 5279.
 4. Remove a stale `listen_port` key if Home Assistant still displays it, then
    save the remaining options and Network mapping.
-5. Start or restart HA Forwarder, point the clients at the selected host port,
+5. Start or restart TCP Relay, point the clients at the selected host port,
    and verify both the forwarding line in the App log and delivery to the
    destination service.
 
@@ -162,7 +162,7 @@ If an earlier version used a custom `listen_port`, migrate in this order:
 If the earlier version used the default TCP 5279, update directly to version
 0.3.0 from **Settings → Apps**. After updating, confirm that the `5279/tcp`
 host mapping remains 5279. Remove a stale `listen_port` key if Home Assistant
-still displays it, save any changes, then start or restart HA Forwarder and
+still displays it, save any changes, then start or restart TCP Relay and
 verify the forwarding log and destination delivery.
 
 Existing connection limits and timeouts remain unchanged. Direct routes to
@@ -173,7 +173,7 @@ upgrading.
 
 Open a [GitHub issue](https://github.com/Herbertmt978/HA_Forwarder/issues) with:
 
-- HA Forwarder version.
+- TCP Relay version.
 - Home Assistant version and installation type.
 - Host architecture (`amd64` or `aarch64`).
 - Redacted configuration.
@@ -181,4 +181,4 @@ Open a [GitHub issue](https://github.com/Herbertmt978/HA_Forwarder/issues) with:
 
 Do not include credentials, tokens, or unrelated Home Assistant logs.
 
-HA Forwarder is licensed under the repository's [MIT License](../LICENSE).
+TCP Relay is licensed under the repository's [MIT License](../LICENSE).
