@@ -2,12 +2,12 @@
 
 ## Current todo
 
-Task 4: publish, review, and merge the version 0.3.0 pull request.
+Complete. No in-scope implementation or rollout todo remains.
 
 ## Active slice
 
-Run the complete branch verification, publish the reviewed branch, require
-green GitHub checks, then merge only if no review finding remains.
+The version 0.3.0 release and HAOS rollout are verified. Retain the rollback
+backup and monitor through normal Home Assistant operation.
 
 ## Completed todos
 
@@ -39,6 +39,16 @@ green GitHub checks, then merge only if no review finding remains.
 - Focused spec and quality re-reviews passed with no Critical or Important
   issue. Public compatibility language was narrowed further so unusual
   non-loopback networking is not guaranteed.
+- Pull request 3 passed both GitHub validation jobs and the configured Codex
+  review, then squash-merged to `main`.
+- Exact-merge validation run `29150529095` passed on commit `ae6650b`.
+- Annotated tag and GitHub release `v0.3.0` point to the verified merge commit.
+- Partial rollback backup `30cd2c41` contains HA Forwarder version 0.2.1.
+- Live version 0.3.0 reports rating 6, bridge networking, the expected
+  `5279/tcp: 5279` mapping, sanitized options, auto boot, and watchdog enabled.
+- Both clients and both destination sessions remained established with zero
+  container restarts; Grott published both device state topics in consecutive
+  cycles with no App error or AppArmor denial.
 
 ## Evidence references
 
@@ -55,6 +65,10 @@ green GitHub checks, then merge only if no review finding remains.
 - Final-fix config and runtime tests, Bash syntax, yamllint, actionlint, and
   `git diff --check` all pass; both focused re-reviews passed.
 - yamllint, actionlint, and `git diff --check` pass on the completed branch.
+- PR validation run `29150364699` and exact-merge validation run `29150529095`
+  both passed the App linter, ShellCheck, tests, AppArmor compile, and container
+  build.
+- Live Supervisor remained healthy and supported on version 2026.06.2.
 
 ## Blockers
 
@@ -62,8 +76,9 @@ None.
 
 ## Resume state
 
-Open this checkpoint, then the plan. Continue with PR publication and remote
-CI/review. Do not merge, tag, release, or deploy until required checks pass.
+No active slice remains. If a regression appears, stop version 0.3.0, run
+`ha backups restore 30cd2c41 --app 24118d52_ha_forwarder`, and verify the
+version 0.2.1 route before resuming investigation.
 
 ## Drift check
 
@@ -72,4 +87,4 @@ CI/review. Do not merge, tag, release, or deploy until required checks pass.
 - New owners or adapters: none; Supervisor is the single host-port owner.
 - Retirement: runtime/config access and current operator guidance are retired;
   `listen_port` remains only in explicit migration/history contexts.
-- Decision: continue.
+- Decision: close as complete; retain the rollback backup.
