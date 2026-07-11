@@ -12,7 +12,7 @@ body:
     id: app_version
     attributes:
       label: HA Forwarder version
-      placeholder: "0.2.1"
+      placeholder: "0.3.0"
     validations:
       required: true
 

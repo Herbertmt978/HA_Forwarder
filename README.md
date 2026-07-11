@@ -31,26 +31,31 @@ minutes on lower-powered hardware.
 ## Quick configuration
 
 ```yaml
-listen_port: 5279
 target_host: "example.local"
 target_port: 5279
 max_connections: 64
 connect_timeout: 15
 ```
 
-`target_host` is required. Save the configuration, start the App, then point
-the sending device at the Home Assistant host and `listen_port`.
+`target_host` is required. HA Forwarder always listens on TCP 5279 inside its
+container, and Home Assistant publishes that listener on host TCP 5279 by
+default. To use a different host port, open **Settings → Apps → HA
+Forwarder → Configuration** and change the host port beside `5279/tcp` in
+the **Network** section. Save the configuration, start the App, then point the
+sending device at the Home Assistant host and the selected host port.
 
 See the [complete operating guide](ha_forwarder/DOCS.md) for option ranges,
 verification, security details, limitations, and troubleshooting.
 
 ## Security
 
-HA Forwarder uses host networking and listens on all IPv4 interfaces. It does
-not add authentication, encryption, source filtering, or protocol validation.
-Use it only on a trusted network and do not expose its listen port directly to
-the internet. A custom AppArmor profile limits the container's filesystem and
-process access.
+HA Forwarder runs in an isolated bridge network and exposes only its
+Supervisor-managed TCP port. Removing host networking raises the Home
+Assistant Supervisor security rating from 5 to 6. The TCP listener is still
+unauthenticated and plaintext: it does not add encryption, source filtering,
+or protocol validation. Keep it on a trusted LAN and do not expose its host
+port directly to the internet. A custom AppArmor profile limits the
+container's filesystem and process access.
 
 ## Development
 

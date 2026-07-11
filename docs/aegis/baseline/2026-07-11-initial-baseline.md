@@ -29,8 +29,10 @@ Date: 2026-07-11
 
 ## Contract inventory
 
-- One IPv4 TCP listener forwards byte streams bidirectionally to one configured
-  hostname or IP and TCP port.
+- One fixed IPv4 listener on container TCP 5279 forwards byte streams
+  bidirectionally to one configured hostname or IP and TCP port. Supervisor
+  publishes it on host TCP 5279 by default; operators select another host port
+  in the App's **Network** section.
 - `target_host` is required; target port, connection limit, and connection
   timeout have bounded defaults.
 - Existing production route on HAOS is host port 5279 to
@@ -67,14 +69,16 @@ locally before Supervisor starts it.
 
 ## Last review findings
 
-Supervisor 2026.06.2 calculates rating 5 as base 5, custom AppArmor +1, and
-host networking -1. Removing host networking yields rating 6 without granting
-new access. Signing is currently hardcoded unavailable; ingress/auth access is
-not legitimate for this relay.
+Live Supervisor 2026.06.2 calculated version 0.2.1 at rating 5: base 5, custom
+AppArmor +1, and host networking -1. Version 0.3.0 implements Supervisor port
+mapping with a fixed container listener and removes the host-network penalty,
+raising the live rating to 6 without granting new access. Signing is currently
+hardcoded unavailable; ingress/auth access is not legitimate for this relay.
 
 ## Compatibility boundaries
 
-External clients must continue using the Home Assistant address and host port
-5279. Destination, limits, timeout, byte transparency, boot behavior, watchdog,
-and auto-update behavior remain unchanged. The listen-port control may move
-from App options to Supervisor's Network section only if 5279 is preserved.
+External clients continue using the Home Assistant address and host port 5279
+by default, while the container listener remains fixed at TCP 5279. Operators
+who used a custom pre-0.3.0 `listen_port` must set that host port in the App's
+**Network** section. Destination, limits, timeout, byte transparency, boot
+behavior, watchdog, and auto-update behavior remain unchanged.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0
+
+- Replace host networking with Supervisor-managed bridge port mapping, raising
+  the Home Assistant security rating from 5 to 6.
+- **Breaking:** remove the `listen_port` option and move host-port selection to
+  the App's **Network** section. The default host port remains TCP 5279; users
+  of a custom port must re-enter it there.
+- Keep the container listener fixed at TCP 5279 and remove the no-longer-needed
+  AppArmor `net_bind_service` capability.
+
 ## 0.2.1
 
 - Restore option compatibility with Home Assistant Supervisor when saving a target host.

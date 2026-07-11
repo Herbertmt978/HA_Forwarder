@@ -1,21 +1,22 @@
 # Home Assistant App: HA Forwarder
 
-HA Forwarder listens for raw TCP connections on the Home Assistant host and
-relays each connection to a single destination service.
+HA Forwarder listens for raw TCP connections on a fixed listener at container
+TCP 5279. Home Assistant Supervisor publishes that listener on the Home
+Assistant host, and HA Forwarder relays each connection to a single destination
+service.
 
 ## Before you start
 
 Confirm that:
 
 - Home Assistant can resolve and reach the destination.
-- The listen port is unused on the Home Assistant host.
+- The selected host port is unused on the Home Assistant host.
 - The sender, Home Assistant, and destination are on networks you trust.
 - The protocol is TCP. UDP is not supported.
 
 ## Configuration
 
 ```yaml
-listen_port: 5279
 target_host: "example.local"
 target_port: 5279
 max_connections: 64
@@ -24,7 +25,6 @@ connect_timeout: 15
 
 | Option | Required | Default | Description |
 |--------|----------|---------|-------------|
-| `listen_port` | No | `5279` | TCP port to open on the Home Assistant host. Valid range: 1–65535. |
 | `target_host` | Yes | None | Destination DNS name or IP address. Do not include a scheme or port. |
 | `target_port` | No | `5279` | Destination TCP port. Valid range: 1–65535. |
 | `max_connections` | No | `64` | Maximum simultaneous forwarding sessions. Valid range: 1–256. |
@@ -39,13 +39,18 @@ start writes a line similar to this in the App log:
 [INFO] Forwarding TCP 5279 to example.local:5279 (max 64 connections, 15s connect timeout)
 ```
 
-Point the sending device at the Home Assistant host address and `listen_port`,
-then confirm that the destination service receives its connection or data.
+The container listener always remains TCP 5279. Supervisor maps it to host TCP
+5279 by default. To choose a different host port, open **Settings → Apps →
+HA Forwarder → Configuration** and change the host port beside `5279/tcp` in
+the **Network** section. Point the sending device at the Home Assistant host
+address and that selected host port, then confirm that the destination service
+receives its connection or data.
 
 ## Runtime behavior
 
-- The listener binds to all IPv4 interfaces because the App uses host
-  networking.
+- The listener binds to all IPv4 interfaces inside the isolated bridge
+  network on container TCP 5279. Supervisor publishes only the host port
+  selected in the App's **Network** section.
 - Each inbound connection creates one child process and one new destination
   connection.
 - Once `max_connections` is reached, more sessions are not accepted until
@@ -56,7 +61,8 @@ then confirm that the destination service receives its connection or data.
   delivery or replayed after a destination failure.
 - The destination sees the Home Assistant host as the connection source; the
   original client's source address is not preserved.
-- Configuration is read when the App starts. Restart after changing options.
+- Configuration is read when the App starts. Restart after changing options or
+  the Network port mapping.
 
 ## Security and limitations
 
@@ -65,13 +71,17 @@ authentication, client allowlist, rate limiting by source, traffic inspection,
 or protocol validation. AppArmor restricts the container, but it does not
 protect the TCP payload.
 
-Keep the listen port on a trusted LAN and use the host or network firewall to
-limit access. Never expose it directly to the internet unless another
-appropriately secured network boundary protects it.
+The isolated bridge network removes the host-network namespace and raises the
+live Home Assistant Supervisor security rating from 5 to 6. The published TCP
+listener nevertheless remains unauthenticated and plaintext. Keep its host
+port on a trusted LAN and use the host or network firewall to limit access.
+Never expose it directly to the internet unless another appropriately secured
+network boundary protects it.
 
-Do not configure the destination as the same Home Assistant host and port as
-the listener. Obvious localhost loops are rejected at startup, but aliases or
-other addresses that resolve back to the host cannot be detected reliably.
+Do not configure the destination as the same Home Assistant host and published
+host port as the listener. Obvious localhost loops on TCP 5279 are rejected at
+startup, but aliases, other addresses that resolve back to the host, and loops
+through a custom host port cannot be detected reliably.
 
 Inbound IPv6 and UDP forwarding are not supported by the current listener.
 IPv6 destination literals are supported.
@@ -81,8 +91,9 @@ IPv6 destination literals are supported.
 ### The App will not start
 
 - **`target_host must be set`**: enter a destination host, save, and restart.
-- **`address already in use`**: another process is using `listen_port`. Choose
-  another port or stop the conflicting service.
+- **`address already in use`**: another process is using the selected host
+  port. Choose another host port in the App's **Network** section or stop the
+  conflicting service.
 - **Self-forwarding error**: use a destination other than the listener's own
   host and port.
 - **Configuration range error**: correct the named option using the ranges in
@@ -106,10 +117,17 @@ and use **Check for updates**.
 
 ## Updating
 
+Version 0.3.0 is a breaking configuration-surface change. Users who kept the
+previous default host port need no port change: TCP 5279 remains the default.
+If an earlier version used a custom `listen_port`, note that value before
+updating and set the same host port beside `5279/tcp` in the App's **Network**
+section. The container listener remains TCP 5279. Remove `listen_port` from the
+YAML configuration because version 0.3.0 no longer provides that option.
+
 Review [CHANGELOG.md](CHANGELOG.md), update HA Forwarder from
 **Settings → Apps**, and verify the forwarding line in the App log after the
-restart. Version 0.2.0 and later keep existing valid destinations working and
-supply defaults for the new connection limits.
+restart. Existing valid destinations, connection limits, and timeouts remain
+unchanged.
 
 ## Support
 
