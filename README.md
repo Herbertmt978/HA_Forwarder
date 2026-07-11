@@ -31,26 +31,44 @@ minutes on lower-powered hardware.
 ## Quick configuration
 
 ```yaml
-listen_port: 5279
 target_host: "example.local"
 target_port: 5279
 max_connections: 64
 connect_timeout: 15
 ```
 
-`target_host` is required. Save the configuration, start the App, then point
-the sending device at the Home Assistant host and `listen_port`.
+`target_host` is required. HA Forwarder always listens on TCP 5279 inside its
+container, and Home Assistant publishes that listener on host TCP 5279 by
+default. To use a different host port, open **Settings → Apps → HA
+Forwarder → Configuration** and change the host port beside `5279/tcp` in
+the **Network** section. Save the configuration, start the App, then point the
+sending device at the Home Assistant host and the selected host port.
 
 See the [complete operating guide](ha_forwarder/DOCS.md) for option ranges,
 verification, security details, limitations, and troubleshooting.
 
 ## Security
 
-HA Forwarder uses host networking and listens on all IPv4 interfaces. It does
-not add authentication, encryption, source filtering, or protocol validation.
-Use it only on a trusted network and do not expose its listen port directly to
-the internet. A custom AppArmor profile limits the container's filesystem and
-process access.
+HA Forwarder no longer shares the host network namespace. Supervisor runs the
+container in a network namespace separate from the host, connects it to a
+Supervisor-managed internal bridge network, and publishes the configured TCP
+mapping.
+That metadata gives version 0.3.0 a calculated Supervisor security rating of 6,
+compared with version 0.2.1's observed rating of 5. The published TCP listener
+remains unauthenticated and plaintext and does not add encryption, source
+filtering, or protocol validation. Keep it on a trusted LAN and do not expose
+its host port directly to the internet. A custom AppArmor profile limits the
+container's filesystem and process access.
+
+Removing host networking changes loopback and other local-only destinations.
+Before upgrading,
+replace loopback or local-only `target_host` values, including `localhost`,
+`localhost.`, `localhost.localdomain`, any `127.0.0.0/8` address, `0.0.0.0`,
+and `::1` or `[::1]`, with a hostname or IP address reachable from the App
+container. In versions before 0.3.0 those values referred to the Home Assistant
+host or its local network stack; in version 0.3.0 they refer to the App
+container itself. This loopback-specific migration does not apply to direct
+routes to services on separate LAN hosts; verify every route after upgrading.
 
 ## Development
 

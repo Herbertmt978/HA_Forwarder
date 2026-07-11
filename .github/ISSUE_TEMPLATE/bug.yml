@@ -12,7 +12,7 @@ body:
     id: app_version
     attributes:
       label: HA Forwarder version
-      placeholder: "0.2.1"
+      placeholder: "0.3.0"
     validations:
       required: true
 
@@ -37,9 +37,20 @@ body:
   - type: textarea
     id: configuration
     attributes:
-      label: Redacted configuration
-      description: Remove or replace any private hostnames and addresses.
+      label: Redacted App options
+      description: Paste the current options and remove or replace any private hostnames and addresses.
       render: yaml
+    validations:
+      required: true
+
+  - type: input
+    id: network_mapping
+    attributes:
+      label: Current 5279/tcp host-port Network mapping
+      description: >-
+        For version 0.3.0 or later, enter the host port shown beside 5279/tcp
+        in the App's Network section. For an older version, enter N/A.
+      placeholder: "5279 or N/A"
     validations:
       required: true
 

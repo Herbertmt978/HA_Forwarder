@@ -1,21 +1,22 @@
 # Home Assistant App: HA Forwarder
 
-HA Forwarder listens for raw TCP connections on the Home Assistant host and
-relays each connection to a single destination service.
+HA Forwarder listens for raw TCP connections on a fixed listener at container
+TCP 5279. Home Assistant Supervisor publishes that listener on the Home
+Assistant host, and HA Forwarder relays each connection to a single destination
+service.
 
 ## Before you start
 
 Confirm that:
 
 - Home Assistant can resolve and reach the destination.
-- The listen port is unused on the Home Assistant host.
+- The selected host port is unused on the Home Assistant host.
 - The sender, Home Assistant, and destination are on networks you trust.
 - The protocol is TCP. UDP is not supported.
 
 ## Configuration
 
 ```yaml
-listen_port: 5279
 target_host: "example.local"
 target_port: 5279
 max_connections: 64
@@ -24,7 +25,6 @@ connect_timeout: 15
 
 | Option | Required | Default | Description |
 |--------|----------|---------|-------------|
-| `listen_port` | No | `5279` | TCP port to open on the Home Assistant host. Valid range: 1–65535. |
 | `target_host` | Yes | None | Destination DNS name or IP address. Do not include a scheme or port. |
 | `target_port` | No | `5279` | Destination TCP port. Valid range: 1–65535. |
 | `max_connections` | No | `64` | Maximum simultaneous forwarding sessions. Valid range: 1–256. |
@@ -39,13 +39,19 @@ start writes a line similar to this in the App log:
 [INFO] Forwarding TCP 5279 to example.local:5279 (max 64 connections, 15s connect timeout)
 ```
 
-Point the sending device at the Home Assistant host address and `listen_port`,
-then confirm that the destination service receives its connection or data.
+The container listener always remains TCP 5279. Supervisor maps it to host TCP
+5279 by default. On version 0.3.0 or later, choose a different host port by
+opening **Settings → Apps → HA Forwarder → Configuration** and changing the
+host port beside `5279/tcp` in the **Network** section. Point the sending device
+at the Home Assistant host address and that selected host port, then confirm
+that the destination service receives its connection or data.
 
 ## Runtime behavior
 
-- The listener binds to all IPv4 interfaces because the App uses host
-  networking.
+- The listener binds to all IPv4 interfaces in the container's network
+  namespace on container TCP 5279. That namespace is separate from the host
+  and connected to a Supervisor-managed internal bridge network; Supervisor
+  publishes the host port selected in the App's **Network** section.
 - Each inbound connection creates one child process and one new destination
   connection.
 - Once `max_connections` is reached, more sessions are not accepted until
@@ -56,7 +62,8 @@ then confirm that the destination service receives its connection or data.
   delivery or replayed after a destination failure.
 - The destination sees the Home Assistant host as the connection source; the
   original client's source address is not preserved.
-- Configuration is read when the App starts. Restart after changing options.
+- Configuration is read when the App starts. Restart after changing options or
+  the Network port mapping.
 
 ## Security and limitations
 
@@ -65,13 +72,20 @@ authentication, client allowlist, rate limiting by source, traffic inspection,
 or protocol validation. AppArmor restricts the container, but it does not
 protect the TCP payload.
 
-Keep the listen port on a trusted LAN and use the host or network firewall to
+Version 0.3.0 removes host networking. Supervisor runs the container on a
+Supervisor-managed internal bridge network within a network namespace separate
+from the host. Its metadata has a calculated Supervisor security rating of 6,
+compared with version 0.2.1's observed rating of 5. Only the shared host
+network namespace was removed. The published TCP listener remains
+unauthenticated and plaintext.
+Keep its host port on a trusted LAN and use the host or network firewall to
 limit access. Never expose it directly to the internet unless another
 appropriately secured network boundary protects it.
 
-Do not configure the destination as the same Home Assistant host and port as
-the listener. Obvious localhost loops are rejected at startup, but aliases or
-other addresses that resolve back to the host cannot be detected reliably.
+Do not configure the destination as the same Home Assistant host and published
+host port as the listener. Obvious localhost loops on TCP 5279 are rejected at
+startup, but aliases, other addresses that resolve back to the host, and loops
+through a custom host port cannot be detected reliably.
 
 Inbound IPv6 and UDP forwarding are not supported by the current listener.
 IPv6 destination literals are supported.
@@ -81,8 +95,9 @@ IPv6 destination literals are supported.
 ### The App will not start
 
 - **`target_host must be set`**: enter a destination host, save, and restart.
-- **`address already in use`**: another process is using `listen_port`. Choose
-  another port or stop the conflicting service.
+- **`address already in use`**: another process is using the selected host
+  port. Choose another host port in the App's **Network** section or stop the
+  conflicting service.
 - **Self-forwarding error**: use a destination other than the listener's own
   host and port.
 - **Configuration range error**: correct the named option using the ranges in
@@ -106,10 +121,53 @@ and use **Check for updates**.
 
 ## Updating
 
-Review [CHANGELOG.md](CHANGELOG.md), update HA Forwarder from
-**Settings → Apps**, and verify the forwarding line in the App log after the
-restart. Version 0.2.0 and later keep existing valid destinations working and
-supply defaults for the new connection limits.
+Review [CHANGELOG.md](CHANGELOG.md) before updating. Version 0.3.0 is a
+breaking configuration-surface change. Choose the path below that matches the
+port used by the earlier version.
+
+### Loopback and local-only destinations must be migrated
+
+Before version 0.3.0, the shared host network namespace meant loopback,
+unspecified, or other local-only `target_host` values referred to the Home
+Assistant host or its local network stack. This includes `localhost`,
+`localhost.`, `localhost.localdomain`, any address in `127.0.0.0/8`,
+`0.0.0.0`, and IPv6 loopback written as `::1` or `[::1]`. From version 0.3.0,
+those values refer to the App container and no longer reach a service bound
+only on the Home Assistant host. Before upgrading, replace any such value with
+a hostname or IP address that is reachable from the App container, then verify
+the destination service accepts the forwarded connection. This
+loopback-specific migration does not apply to direct routes to services on
+separate LAN hosts; verify every route after upgrading.
+
+### Earlier version used a custom host port
+
+If an earlier version used a custom `listen_port`, migrate in this order:
+
+1. While the earlier version is still installed, record its `listen_port`,
+   then stop the App.
+2. Update to (or install) version 0.3.0. The `5279/tcp` **Network** row is
+   supplied by version 0.3.0 and is not available in version 0.2.1. If the App
+   starts automatically, stop it again before continuing.
+3. Open **Settings → Apps → HA Forwarder → Configuration** and set the host
+   port beside `5279/tcp` in the **Network** section to the value recorded in
+   step 1. The container side remains TCP 5279.
+4. Remove a stale `listen_port` key if Home Assistant still displays it, then
+   save the remaining options and Network mapping.
+5. Start or restart HA Forwarder, point the clients at the selected host port,
+   and verify both the forwarding line in the App log and delivery to the
+   destination service.
+
+### Earlier version used the default host port
+
+If the earlier version used the default TCP 5279, update directly to version
+0.3.0 from **Settings → Apps**. After updating, confirm that the `5279/tcp`
+host mapping remains 5279. Remove a stale `listen_port` key if Home Assistant
+still displays it, save any changes, then start or restart HA Forwarder and
+verify the forwarding log and destination delivery.
+
+Existing connection limits and timeouts remain unchanged. Direct routes to
+separate LAN hosts do not need loopback replacement, but verify them after
+upgrading.
 
 ## Support
 

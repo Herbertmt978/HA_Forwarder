@@ -2,6 +2,7 @@
 set -eu
 
 CONFIG_PATH="${CONFIG_PATH:-/data/options.json}"
+LISTEN_PORT=5279
 
 fail() {
     printf '[ERROR] %s\n' "${1}" >&2
@@ -24,9 +25,6 @@ if [ ! -r "${CONFIG_PATH}" ]; then
     fail "Configuration file ${CONFIG_PATH} is not readable."
 fi
 
-if ! LISTEN_PORT="$(jq -er '.listen_port // 5279' "${CONFIG_PATH}")"; then
-    fail "Unable to read listen_port from ${CONFIG_PATH}."
-fi
 if ! TARGET_HOST="$(jq -er '.target_host // ""' "${CONFIG_PATH}")"; then
     fail "Unable to read target_host from ${CONFIG_PATH}."
 fi
@@ -49,7 +47,6 @@ case "${TARGET_HOST}" in
         ;;
 esac
 
-validate_integer_range "listen_port" "${LISTEN_PORT}" 1 65535
 validate_integer_range "target_port" "${TARGET_PORT}" 1 65535
 validate_integer_range "max_connections" "${MAX_CONNECTIONS}" 1 256
 validate_integer_range "connect_timeout" "${CONNECT_TIMEOUT}" 1 300
