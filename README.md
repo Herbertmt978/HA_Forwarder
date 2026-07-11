@@ -67,8 +67,8 @@ replace loopback or local-only `target_host` values, including `localhost`,
 and `::1` or `[::1]`, with a hostname or IP address reachable from the App
 container. In versions before 0.3.0 those values referred to the Home Assistant
 host or its local network stack; in version 0.3.0 they refer to the App
-container itself. Non-loopback destinations keep their existing forwarding
-behavior.
+container itself. This loopback-specific migration does not apply to direct
+routes to services on separate LAN hosts; verify every route after upgrading.
 
 ## Development
 

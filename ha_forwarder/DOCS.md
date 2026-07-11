@@ -135,8 +135,9 @@ Assistant host or its local network stack. This includes `localhost`,
 those values refer to the App container and no longer reach a service bound
 only on the Home Assistant host. Before upgrading, replace any such value with
 a hostname or IP address that is reachable from the App container, then verify
-the destination service accepts the forwarded connection. Routes to separate
-non-loopback LAN hosts are unaffected by this change.
+the destination service accepts the forwarded connection. This
+loopback-specific migration does not apply to direct routes to services on
+separate LAN hosts; verify every route after upgrading.
 
 ### Earlier version used a custom host port
 
@@ -164,8 +165,9 @@ host mapping remains 5279. Remove a stale `listen_port` key if Home Assistant
 still displays it, save any changes, then start or restart HA Forwarder and
 verify the forwarding log and destination delivery.
 
-Existing non-loopback destinations, connection limits, and timeouts retain
-their forwarding behavior.
+Existing connection limits and timeouts remain unchanged. Direct routes to
+separate LAN hosts do not need loopback replacement, but verify them after
+upgrading.
 
 ## Support
 

@@ -65,7 +65,7 @@
 - The repository has no project-specific `scripts/security-gate.sh`; no such
   security-gate result is claimed.
 
-## Final review fixes pending re-review
+## Final review fix and re-review evidence
 
 - Final branch review found that removing host networking changes loopback
   and local-only destination semantics: before 0.3.0, values including
@@ -74,8 +74,8 @@
   local network stack; in 0.3.0 they refer to the App container.
 - README, App documentation, and the changelog now require affected users to
   replace loopback destinations with a hostname or IP reachable from the App
-  container before upgrading. Compatibility language is limited to
-  non-loopback destinations.
+  container before upgrading. Compatibility language distinguishes direct
+  separate-LAN routes without guaranteeing every unusual non-loopback case.
 - The current `192.168.50.89:5279` destination is a separate non-loopback LAN
   host and is therefore unaffected by this semantic change.
 - The metadata security guard now normalizes all requested case-insensitive
@@ -83,7 +83,11 @@
   host networking and high-risk access, and `no`, `off`, or `0` cannot bypass
   the AppArmor requirement.
 - `tests/test_config.sh` and `tests/test_run.sh` passed after the fixes, as did
-  Bash syntax checks, yamllint, actionlint, and `git diff --check`. Final branch
-  re-review remains pending.
+  Bash syntax checks, yamllint, actionlint, and `git diff --check`.
+- Focused spec and quality re-reviews passed with no Critical or Important
+  finding. The quality review noted that the lightweight trusted-metadata guard
+  does not parse contrived YAML anchors or quoted keys. It is a repository
+  regression check rather than a runtime security boundary; code review remains
+  the backstop for those forms.
 
 No pull-request CI, release, or live HAOS evidence exists for 0.3.0 yet.

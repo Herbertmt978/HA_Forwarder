@@ -27,7 +27,8 @@ loopback or local-only `target_host` value, including `localhost`, `localhost.`,
 Earlier versions treated those values as destinations on the Home Assistant
 host or its local network stack; version 0.3.0 treats them as destinations
 inside the App container.
-Non-loopback destinations retain their forwarding behavior.
+This loopback-specific migration does not apply to direct routes to services
+on separate LAN hosts; verify every route after upgrading.
 
 Read the [full documentation](DOCS.md) before exposing the host port.
 

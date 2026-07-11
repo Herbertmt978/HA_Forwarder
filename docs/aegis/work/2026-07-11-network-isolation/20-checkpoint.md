@@ -35,7 +35,10 @@ green GitHub checks, then merge only if no review finding remains.
 - The public upgrade guidance now requires pre-0.3.0 loopback or local-only
   destinations to use a hostname or IP reachable from the App container, and
   the regression guard normalizes YAML aliases (`true`/`yes`/`on`/`1` and
-  `false`/`no`/`off`/`0`) case-insensitively. Final re-review remains pending.
+  `false`/`no`/`off`/`0`) case-insensitively.
+- Focused spec and quality re-reviews passed with no Critical or Important
+  issue. Public compatibility language was narrowed further so unusual
+  non-loopback networking is not guaranteed.
 
 ## Evidence references
 
@@ -50,7 +53,7 @@ green GitHub checks, then merge only if no review finding remains.
   the old value before updating; default-port users update directly and verify
   the `5279/tcp` mapping remains 5279.
 - Final-fix config and runtime tests, Bash syntax, yamllint, actionlint, and
-  `git diff --check` all pass; independent re-review remains pending.
+  `git diff --check` all pass; both focused re-reviews passed.
 - yamllint, actionlint, and `git diff --check` pass on the completed branch.
 
 ## Blockers
@@ -59,9 +62,8 @@ None.
 
 ## Resume state
 
-Open this checkpoint, then the plan. Re-review the loopback/local-only
-documentation and boolean-alias guard, then continue with PR publication. Do
-not merge, tag, release, or deploy until required checks pass.
+Open this checkpoint, then the plan. Continue with PR publication and remote
+CI/review. Do not merge, tag, release, or deploy until required checks pass.
 
 ## Drift check
 

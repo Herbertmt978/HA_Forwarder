@@ -12,8 +12,8 @@
   container. Before upgrading, replace values including `localhost`,
   `localhost.`, `localhost.localdomain`, any `127.0.0.0/8` address,
   `0.0.0.0`, and `::1` or `[::1]` with a hostname or IP address reachable
-  from the App container. Non-loopback destinations retain their forwarding
-  behavior.
+  from the App container. This migration does not apply to direct routes to
+  separate LAN hosts; verify every route after upgrading.
 - Keep the container listener fixed at TCP 5279 and remove the no-longer-needed
   AppArmor `net_bind_service` capability.
 
