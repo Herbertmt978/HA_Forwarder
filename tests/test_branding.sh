@@ -120,7 +120,7 @@ assert_equal \
     "$(top_level_yaml_value "${APP_CONFIG}" name)"
 assert_equal \
     'ha_forwarder/config.yaml version' \
-    '"0.3.1"' \
+    '"0.3.2"' \
     "$(top_level_yaml_value "${APP_CONFIG}" version)"
 assert_equal \
     'ha_forwarder/config.yaml slug' \
