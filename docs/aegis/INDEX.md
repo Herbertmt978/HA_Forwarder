@@ -6,3 +6,4 @@
 - Plan: [TCP Relay rebrand and 0.3.1 release](plans/2026-07-11-tcp-relay-rebrand.md)
 - Work: [Network isolation execution](work/2026-07-11-network-isolation/10-intent.md)
 - Work: [TCP Relay rebrand execution](work/2026-07-11-tcp-relay-rebrand/10-intent.md)
+- Work: [AppArmor startup-denial cleanup](work/2026-07-12-apparmor-startup-denials/10-intent.md)

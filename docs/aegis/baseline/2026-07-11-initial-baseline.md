@@ -1,6 +1,7 @@
 # TCP Relay for Home Assistant Baseline
 
 Date: 2026-07-11
+Last updated: 2026-07-12
 
 ## Project structure
 
@@ -75,19 +76,20 @@ locally before Supervisor starts it.
 ## Last review findings
 
 Live Supervisor 2026.06.2 calculated version 0.2.1 at rating 5: base 5, custom
-AppArmor +1, and host networking -1. Live version 0.3.1 reports rating 6 with
+AppArmor +1, and host networking -1. Live version 0.3.2 reports rating 6 with
 Supervisor port mapping, a fixed container listener, custom AppArmor, and no
 host networking or new permissions. Its container remained at zero restarts,
-and a controlled connection through the published Home Assistant port reached
-the configured destination successfully.
+and controlled connections through the published Home Assistant port reached
+the configured destination successfully before and after a second start.
 
-Both the earlier 0.3.0 start and the 0.3.1 start produced the same two
-non-blocking AppArmor denials while S6 listed /etc/fix-attrs.d/ and
-/etc/services.d/. S6 and the relay continued normally, and no further denial
-appeared during observation. Treat eliminating that pre-existing startup noise
-as a future confinement-maintenance task, not a 0.3.1 regression. Signing is
-currently hardcoded unavailable; ingress/auth access is not legitimate for
-this relay.
+Versions 0.3.0 and 0.3.1 produced the same two non-blocking AppArmor denials
+while S6 listed /etc/fix-attrs.d/ and /etc/services.d/. Version 0.3.2 adds exact
+read-only rules for those directory objects. Two cursor-bounded starts produced
+zero TCP Relay profile denials and zero AppArmor denials overall, including
+after controlled end-to-end relay traffic. No descendant access was added
+beneath /etc/fix-attrs.d/, and the existing service-file rules are unchanged.
+Signing is currently hardcoded unavailable; ingress/auth access is not
+legitimate for this relay.
 
 ## Compatibility boundaries
 
