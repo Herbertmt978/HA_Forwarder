@@ -1,5 +1,5 @@
 name: TCP Relay
-version: "0.3.1"
+version: "0.3.2"
 breaking_versions:
   - "0.3.0"
 slug: ha_forwarder

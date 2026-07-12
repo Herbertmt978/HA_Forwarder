@@ -23,6 +23,9 @@ profile ha_forwarder flags=(attach_disconnected,mediate_deleted) {
   /etc/s6-overlay/** rix,
   /etc/s6/** rix,
   /run/{s6,s6-rc*,service}/** ix,
+  # S6 lists these directories during startup, even when they are empty.
+  /etc/fix-attrs.d/ r,
+  /etc/services.d/ r,
   /etc/services.d/** rwix,
   /etc/cont-init.d/** rwix,
   /etc/cont-finish.d/** rwix,

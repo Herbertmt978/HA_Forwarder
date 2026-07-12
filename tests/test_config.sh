@@ -79,6 +79,45 @@ apparmor="$(top_level_boolean apparmor)"
 [[ "${apparmor}" != "false" ]] ||
     record_failure "custom AppArmor profile must not be disabled"
 
+apparmor_path_rule_counts() {
+    local path="${1}"
+
+    awk -v expected_path="${path}" '
+        {
+            line = $0
+            sub(/[[:space:]]*#.*/, "", line)
+            sub(/^[[:space:]]*/, "", line)
+            sub(/[[:space:]]*$/, "", line)
+
+            if (line == expected_path " r,") {
+                canonical++
+            }
+
+            $0 = line
+            for (field = 1; field <= NF; field++) {
+                token = $field
+                sub(/,$/, "", token)
+                sub(/^"/, "", token)
+                sub(/"$/, "", token)
+                if (token == expected_path) {
+                    occurrences++
+                }
+            }
+        }
+        END { printf "%d:%d\n", canonical, occurrences }
+    ' "${APPARMOR_PATH}"
+}
+
+for s6_directory in /etc/fix-attrs.d/ /etc/services.d/; do
+    rule_counts="$(apparmor_path_rule_counts "${s6_directory}")"
+    [[ "${rule_counts}" == "1:1" ]] ||
+        record_failure "${s6_directory} must have one canonical read-only rule; got '${rule_counts}'"
+done
+
+fix_attrs_children_counts="$(apparmor_path_rule_counts '/etc/fix-attrs.d/**')"
+[[ "${fix_attrs_children_counts}" == "0:0" ]] ||
+    record_failure "/etc/fix-attrs.d/** must not grant descendant access; got '${fix_attrs_children_counts}'"
+
 [[ "${failures}" -eq 0 ]] || exit 1
 
 target_host_schema="$(

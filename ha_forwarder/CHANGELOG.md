@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2
+
+- Allow S6 to list the `/etc/fix-attrs.d/` and `/etc/services.d/` directories
+  using exact, read-only AppArmor rules. This removes two non-blocking denials
+  at startup without granting access beneath `/etc/fix-attrs.d/` or changing
+  the existing service-file rules.
+- This release makes no option, port, forwarding, or migration change.
+
 ## 0.3.1
 
 - The repository/README title is now `TCP Relay for Home Assistant`, and the
