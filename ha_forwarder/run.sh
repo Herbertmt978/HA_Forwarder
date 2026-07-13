@@ -54,7 +54,7 @@ validate_integer_range "connect_timeout" "${CONNECT_TIMEOUT}" 1 300
 NORMALIZED_TARGET_HOST="$(printf '%s' "${TARGET_HOST}" | tr '[:upper:]' '[:lower:]')"
 if [ "${LISTEN_PORT}" = "${TARGET_PORT}" ]; then
     case "${NORMALIZED_TARGET_HOST}" in
-        "localhost" | "localhost.localdomain" | "0.0.0.0" | 127.* | "::1" | "[::1]")
+        "localhost" | "localhost." | "localhost.localdomain" | "localhost.localdomain." | "0.0.0.0" | 127.* | "::1" | "[::1]")
             fail "target_host and target_port would forward the listener back to itself."
             ;;
     esac

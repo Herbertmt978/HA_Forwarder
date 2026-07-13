@@ -100,6 +100,20 @@ run_success \
     "TCP:example.local:5279,connect-timeout=15"
 
 run_success \
+    "absolute-hostname" \
+    '{"target_host":"example.local."}' \
+    "[INFO] Forwarding TCP 5279 to example.local.:5279 (max 64 connections, 15s connect timeout)" \
+    "TCP-LISTEN:5279,fork,reuseaddr,max-children=64" \
+    "TCP:example.local.:5279,connect-timeout=15"
+
+run_success \
+    "absolute-localhost-different-port" \
+    '{"target_host":"localhost.","target_port":5280}' \
+    "[INFO] Forwarding TCP 5279 to localhost.:5280 (max 64 connections, 15s connect timeout)" \
+    "TCP-LISTEN:5279,fork,reuseaddr,max-children=64" \
+    "TCP:localhost.:5280,connect-timeout=15"
+
+run_success \
     "ipv6-target" \
     '{"listen_port":5279,"target_host":"2001:db8::10","target_port":6000}' \
     "[INFO] Forwarding TCP 5279 to 2001:db8::10:6000" \
@@ -124,6 +138,16 @@ expect_failure \
 expect_failure \
     "self-loop" \
     '{"listen_port":5279,"target_host":"LOCALHOST","target_port":5279}' \
+    "would forward the listener back to itself"
+
+expect_failure \
+    "absolute-localhost-self-loop" \
+    '{"target_host":"localhost.","target_port":5279}' \
+    "would forward the listener back to itself"
+
+expect_failure \
+    "absolute-localdomain-self-loop" \
+    '{"target_host":"LOCALHOST.LOCALDOMAIN.","target_port":5279}' \
     "would forward the listener back to itself"
 
 printf 'All run.sh tests passed.\n'
