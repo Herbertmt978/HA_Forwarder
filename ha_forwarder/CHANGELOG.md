@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Reject same-port self-forwarding through the absolute loopback hostnames
+  `localhost.` and `localhost.localdomain.` (case-insensitive).
+
 ## 0.3.2
 
 - Allow S6 to list the `/etc/fix-attrs.d/` and `/etc/services.d/` directories
