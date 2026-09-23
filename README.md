@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="ha_forwarder/logo.png" alt="TCP Relay: two arrows showing traffic in both directions" width="220">
+
 # TCP Relay for Home Assistant
 
 **Forward device TCP connections through Home Assistant to another host.**
@@ -13,7 +15,7 @@
 
 [![Open your Home Assistant instance and add this App repository][install-badge]][install-link]
 
-[Installation](#installation) · [Configuration](#configuration) · [Security](#security) · [Full App documentation](ha_forwarder/DOCS.md)
+[Install](#installation) · [Configuration](#configuration) · [How it works](#how-it-works-and-its-limits) · [Security](#security) · [Full App guide](ha_forwarder/DOCS.md)
 
 </div>
 
