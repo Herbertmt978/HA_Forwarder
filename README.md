@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="ha_forwarder/logo.png" alt="TCP Relay: two arrows showing traffic in both directions" width="220">
+<img src="brand/relay.svg" alt="TCP Relay: two arrows showing traffic in both directions" width="220">
 
 # TCP Relay for Home Assistant
 

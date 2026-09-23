@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">TCP Relay</title>
+  <desc id="desc">A cyan arrow pointing right above a blue arrow pointing left, each with terminal dots.</desc>
+  <g fill="#08baf4" stroke="#08baf4" stroke-width="25" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="35" cy="96" r="23" stroke="none"/>
+    <path d="M66 96h117" fill="none"/>
+    <path d="m160 65 31 31-31 31" fill="none"/>
+    <circle cx="222" cy="96" r="23" stroke="none"/>
+  </g>
+  <g fill="#155eea" stroke="#155eea" stroke-width="25" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="35" cy="174" r="23" stroke="none"/>
+    <path d="M190 174H73" fill="none"/>
+    <path d="m96 143-31 31 31 31" fill="none"/>
+    <circle cx="222" cy="174" r="23" stroke="none"/>
+  </g>
+</svg>
