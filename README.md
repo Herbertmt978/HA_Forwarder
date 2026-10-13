@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="brand/relay.svg" alt="TCP Relay: two arrows showing traffic in both directions" width="220">
+<img src="brand/header.svg" alt="TCP Relay for Home Assistant: a device, relay and host linked by traffic in both directions" width="880">
 
 # TCP Relay for Home Assistant
 
